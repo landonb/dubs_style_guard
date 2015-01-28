@@ -30,7 +30,29 @@ specially, like all help files. To edit it, just type
 to help, type ``\E`` and the modeline will be re-read
 (caveat: most help files use modelines, but not all of them).
 
-Project page: https://github.com/landonb/dubs_style_guard
+Installation
+------------
+
+Standard Pathogen installation:
+
+.. code-block:: bash
+
+   cd ~/.vim/bundle/
+   git clone https://github.com/landonb/dubs_style_guard.git
+
+Or, Standard submodule installation:
+
+.. code-block:: bash
+
+   cd ~/.vim/bundle/
+   git submodule add https://github.com/landonb/dubs_style_guard.git
+
+Online help:
+
+.. code-block:: vim
+
+   :Helptags
+   :help dubs-style-guard
 
 Modeline and Modeline Files
 ---------------------------
