@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2015.01.27
+" Last Modified: 2015.03.17
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -65,16 +65,18 @@ let g:plugin_dubs_style_guard = 1
 let s:dubs_style_file_modeline = -1
 let s:dubs_style_2_char_spaced = 0
 let s:dubs_style_4_char_tabbed = 1
-let s:dubs_style_8_char_tabbed = 2
-let s:dubs_style_2_char_tabbed = 3
-let s:dubs_style_4_char_spaced = 4
+let s:dubs_style_4_char_spaced = 2
+" These are not cycleable with \e (unless you bump dubs_styles_count [and reorder]):
+let s:dubs_style_8_char_tabbed = 3
+let s:dubs_style_2_char_tabbed = 4
 let s:dubs_style_3_char_spaced = 5
 let s:dubs_style_3_char_tabbed = 6
 " We don't actually cycle through all of the styles above.
 " We only cycle over a few of them, depending on our taste.
 " Feel free to change this count to cycle over more styles.
 " Too many: let s:dubs_styles_count = s:dubs_style_3_char_tabbed + 1
-let s:dubs_styles_count = s:dubs_style_4_char_tabbed + 1
+"let s:dubs_styles_count = s:dubs_style_4_char_tabbed + 1
+let s:dubs_styles_count = s:dubs_style_4_char_spaced + 1
 
 " User interface.
 if !exists('g:dubs_style_preferred_expand_tab')
@@ -370,37 +372,46 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     "       Note that we could also use grep -P.
     let l:n_spaced = (system('pcregrep "^ " ' . expand('%:p') . '| wc -l'))
     let l:n_tabbed = (system('pcregrep "^\t" ' . expand('%:p') . '| wc -l'))
+    let l:n_spaced = substitute(l:n_spaced, "\n", "", "")
+    let l:n_tabbed = substitute(l:n_tabbed, "\n", "", "")
     if (l:log_msgs == 1)
       DGCTSGEcho 'Tab styl anlyss: n_spaced: ' . l:n_spaced
                            \ . ' / n_tabbed: ' . l:n_tabbed
     endif
-    " See also: https://github.com/tpope/vim-sleuth
+    " See also: tpope's Sleuth: https://github.com/tpope/vim-sleuth
     "      and: http://www.vim.org/scripts/script.php?script_id=1171
     "           DetectIndent: Automatically detect indent
     "                         (expandtab, shiftwidth, tabstop) settings
-    "  two other solutions. Sleuth is pure Vim and more complete (it
-    "  doesn't count comments, for example). DetectIndent is also pure Vim.
+    " Sleuth is pure Vim and more complete (it doesn't consider spacing
+    " style of comments, for example). DetectIndent is also pure Vim.
+    " But this is a pretty good solution
 
     " We can also look for modeline strings.
     " Test: tail doc-------dubs_cycloplan.txt \
-    "       | egrep '^\W*vim:([\=\:a-z0-9]+)\W*$' \
-    "       | sed 's/([\=\:a-z0-9]+)\W*$/\1/' | sed 's/:/ /g'
+    "       | /bin/egrep '^\W*vim:([\=\:a-z0-9]+)\W*$' \
+    "       | /bin/sed 's/([\=\:a-z0-9]+)\W*$/\1/' \
+    "       | /bin/sed 's/:/ /g'
     "
     " We'll look for a modeline in the file itself.
     let l:modeline_grep_prefix = 'egrep --max-count=1 "^\W*'
-    let l:modeline_grep_postfix = ':([\=\:a-z0-9]+)\W*$" '
+    " SYNC_ME: l:modeline_grep_postfix and l:modeline_seds_postfix.
+    let l:modeline_grep_postfix = ':([\=\:a-z0-9 ]+)\W*$" '
+    " NOTE: grep syntax is just '?' but in sed you'll see '\?'.
     let l:modeline_grep =
-      \ l:modeline_grep_prefix . 'vim' . l:modeline_grep_postfix
+      \ l:modeline_grep_prefix . 'vim\s?' . l:modeline_grep_postfix
     let l:modeline_seds_prefix =
-      \ '| sed "s/^\W*'
+      \ '| /bin/sed "s/^\W*'
+    " SYNC_ME: l:modeline_grep_postfix and l:modeline_seds_postfix.
     let l:modeline_seds_postfix =
-      \ ':\([\=\:a-z0-9]\+\)\W*$/\1/" | sed "s/:/ /g"'
+      \ ':\([\=\:a-z0-9 ]\+\)\W*$/\1/"'
+      \ . ' | /bin/sed "s/:/ /g"'
+      \ . ' | /bin/sed "s/\bset\b/ /g"'
     let l:modeline_seds =
-      \ l:modeline_seds_prefix . 'vim' . l:modeline_seds_postfix
+      \ l:modeline_seds_prefix . 'vim\s\?' . l:modeline_seds_postfix
     let l:modeline_search = l:modeline_grep . l:modeline_seds
     let l:modeline_embedded = ''
     if filereadable(expand('%:p'))
-      let l:bash_cmd1 = 'head --lines=5 ' . expand('%:p')
+      let l:bash_cmd1 = '/usr/bin/head --lines=13 ' . expand('%:p')
                         \ . ' | ' . l:modeline_search
       " Note: [lb] sent the head a bad filename but v:shell_error
       "       indicates 0, which could be because the pipe to grep
@@ -414,10 +425,12 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       "       i.e., we sent the error string to the 'set' command.
       "       MAYBE: Check the syntax of l:modeline_embedded, maybe
       "              using matchstr.
+      DGCTSGEcho '1st l:bash_cmd1: ' . l:bash_cmd1
       let l:modeline_embedded = system(l:bash_cmd1)
       if l:modeline_embedded == ''
-        let l:bash_cmd1 = 'tail --lines=5 ' . expand('%:p')
+        let l:bash_cmd1 = '/usr/bin/tail --lines=5 ' . expand('%:p')
                           \ . ' | ' . l:modeline_search
+        DGCTSGEcho '2nd l:bash_cmd1: ' . l:bash_cmd1
         let l:modeline_embedded = system(l:bash_cmd1)
       endif
       if l:modeline_embedded != ''
@@ -439,6 +452,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
         let l:modeproj_seds =
           \ l:modeline_seds_prefix . expand('%:e') . l:modeline_seds_postfix
         let l:bash_cmd2 = l:modeproj_grep . s:modeline_f . l:modeproj_seds
+        DGCTSGEcho '1st l:bash_cmd2: ' . l:bash_cmd2
         let l:modeline_project = system(l:bash_cmd2)
       endif
       if l:modeline_project != ''
@@ -450,6 +464,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
         let l:modeproj_seds =
           \ l:modeline_seds_prefix . '\*' . l:modeline_seds_postfix
         let l:bash_cmd2 = l:modeproj_grep . s:modeline_f . l:modeproj_seds
+        DGCTSGEcho '2nd l:bash_cmd2: ' . l:bash_cmd2
         let l:modeline_project = system(l:bash_cmd2)
         if l:modeline_project != ''
           DGCTSGEcho 'Found default modeline project file match: '
@@ -467,6 +482,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
 
     if l:found_modeline != ''
       " Either the file or a .dubs_style.vim file contains a modeline.
+      DGCTSGEcho 'execute set ' . l:found_modeline
       execute 'set ' . l:found_modeline
       let b:dubs_style_index = s:dubs_style_file_modeline
     elseif expand('%:e') == 'help'
@@ -486,11 +502,15 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       let b:dubs_style_index = s:dubs_style_4_char_tabbed
     elseif expand('%:e') == 'rst'
       " Because of the ".. directive" convention in reST, which means blocks
-      " often align after the third column, always make it 3-space indented.
+      " often align after the third column, make rstdentation 3-spaced. Or 4.
+      " I keep changing my mind.
       if (l:log_msgs == 1)
         DGCTSGEcho 'Style guess: Space-indented / rst'
       endif
-      let b:dubs_style_index = s:dubs_style_3_char_spaced
+      "let b:dubs_style_index = s:dubs_style_3_char_spaced
+      "let b:dubs_style_index = s:dubs_style_2_char_spaced
+      let b:dubs_style_index = s:dubs_style_4_char_spaced
+      DGCTSGEcho 'dubs_style_index: ' . b:dubs_style_index
     else
       " Just use spaces.
       let b:dubs_style_index = s:dubs_style_2_char_spaced
