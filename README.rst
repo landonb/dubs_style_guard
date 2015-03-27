@@ -71,6 +71,45 @@ For more help on the special modeline file, look at the
 file of the same name in the source, in the same directory
 as this readme.
 
+Similar Plugins
+---------------
+
+Style-enforcers:
+
+- `EditorConfig <http://editorconfig.org/>`__
+  is a robust and universal style enforcer.
+
+  - It uses an ``.editorconfig`` file similar
+    (but more expressive) than ``.dubs_style.vim``.
+
+  - There are plugins for most IDEs, in addition to Vim.
+
+    - For the Vim plugin, download
+      `EditorConfig Vim Plugin
+      <https://github.com/editorconfig/editorconfig-vim>`__
+      to your ``~/.vim/bundle`` directory.
+
+  - I recommend using
+    `EditorConfig <http://editorconfig.org/>`__
+    if you have a large team and not everyone
+    has grown into Vim yet.
+    But the ``.dubs_style.vim`` solution is nice because
+    it uses the standard modeline syntax -- whereas EditorConfig
+    uses its own INI-style format -- so if you're already a Vimmer,
+    it's quick 'n easy to make a ``.dubs_style.vim`` file and stuff
+    a modeline in't.
+
+    - Also, the ``dubs_style`` plugin has a few other features:
+      it has a nice style sleuther
+      and the ``\e`` and ``\E`` macros make it easy to cycle through and
+      reset the style (based on the current modeline or sluethed answer).
+
+Whitespace-detectors:
+
+- `Vim-Sleuth <https://github.com/tpope/vim-sleuth>`__
+
+- `DetectIndent <http://www.vim.org/scripts/script.php?script_id=1171>`__
+
 Key Mappings
 ------------
 

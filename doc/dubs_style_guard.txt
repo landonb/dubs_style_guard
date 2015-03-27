@@ -6,7 +6,8 @@ STYLE GUARD				*dubs-style-guard*
 
 1. About This Plugin			|dubs-styleg-about|
 2. Modeline Files			|dubs-styleg-modelines|
-3. Style Guard Commands			|dubs-styleg-commands|
+3. Similar Plugins			|dubs-styleg-similar|
+4. Style Guard Commands			|dubs-styleg-commands|
 
 ==============================================================================
 1. About This Plugin			*dubs-styleg-about*
@@ -57,7 +58,38 @@ file of the same name in the source, in the same directory
 as this readme.
 
 ==============================================================================
-3. Style Guard Commands			*dubs-styleg-commands*
+3. Similar Plugins			*dubs-styleg-similar*
+
+Style-enforcers:
+
+- EditorConfig <http://editorconfig.org/>
+  is a robust and universal style enforcer.
+
+  - It uses an `.editorconfig` file similar
+    (but more expressive) than `.dubs_style.vim`.
+
+  - There are plugins for most IDEs, in addition to Vim.
+
+    - For the Vim plugin, download
+      EditorConfig Vim Plugin
+      <https://github.com/editorconfig/editorconfig-vim>
+      to your `~/.vim/bundle` directory.
+
+  - I highly recommend using
+    EditorConfig <http://editorconfig.org/>
+    to make sure everyone on your team uses
+    the same style when working on project files;
+    the `.dubs_style.vim` solution is okay for
+    personal use but not as great as EditorConfig.
+
+Whitespace-detectors:
+
+- `Vim-Sleuth <https://github.com/tpope/vim-sleuth>`__
+
+- `DetectIndent <http://www.vim.org/scripts/script.php?script_id=1171>`__
+
+==============================================================================
+4. Style Guard Commands			*dubs-styleg-commands*
 
 Table~
 
