@@ -1,11 +1,11 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2015.03.17
+" Last Modified: 2016.03.24
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
 " -------------------------------------------------------------------
-" Copyright © 2009, 2015 Landon Bouma.
+" Copyright © 2009, 2015-2016 Landon Bouma.
 "
 " This file is part of Dubsacks.
 "
@@ -274,13 +274,18 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     DGCTSGEcho 'Setting style: ' . expand('%:p')
   endif
 
+  " FIXME: Check that the editorconfig plugin is installed, otherwise skip this.
+  " Prefer an .editorconfig file over a .dubs_style.vim file or guessing.
+  let s:editconf_f = findfile('.editorconfig', '.;')
+
   let l:use_style = 1
   " NO: \ || (&tw == 0)
   if (!exists('b:dubs_style_index')
       \ || (&buflisted == 0)
       \ || (&buftype == 'quickfix')
       \ || (&modifiable == 0)
-      \ || (bufname('%') == '-MiniBufExplorer-'))
+      \ || (bufname('%') == '-MiniBufExplorer-')
+      \ || (s:editconf_f != ''))
     if (l:log_msgs == 1)
       DGCTSGEcho 'Style guide: not use_style'
     endif
@@ -411,6 +416,17 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     let l:modeline_search = l:modeline_grep . l:modeline_seds
     let l:modeline_embedded = ''
     if filereadable(expand('%:p'))
+      " 2015.04.10: If you open a file with a space in it's path, you'll see, e.g.,
+      "      "./Electronica-House/Daft Punk/.audfs" 2L, 64C^[[2;2R
+      "      Error detected while processing function       "      <SNR>40_DG_CycleThruStyleGuides_FixMatch..<SNR>40_DG_CycleThruStyleGuides..<SNR>40_DG_CycleThru
+      "      StyleGuides_:
+      "      line  217:
+      "      E518: Unknown option: /usr/bin/head:
+      "      E486: Pattern not found: usr
+      "      E518: Unknown option: /usr/bin/head:
+      "      E486: Pattern not found: usr
+      "      Press ENTER or type command to continue
+      "
       let l:bash_cmd1 = '/usr/bin/head --lines=13 ' . expand('%:p')
                         \ . ' | ' . l:modeline_search
       " Note: [lb] sent the head a bad filename but v:shell_error
@@ -440,7 +456,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
         DGCTSGEcho 'File is not readable: ' . expand('%:p')
     endif
 
-    " And we can also look for modeline string project files.
+    " Look for a dubs modeline file.
     let s:modeline_f = findfile('.dubs_style.vim', '.;')
     let l:bash_cmd2 = ''
     let l:modeline_project = ''
