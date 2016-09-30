@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2016.03.24
+" Last Modified: 2016.09.30
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -427,7 +427,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       "      E486: Pattern not found: usr
       "      Press ENTER or type command to continue
       "
-      let l:bash_cmd1 = '/usr/bin/head --lines=13 ' . expand('%:p')
+      let l:bash_cmd1 = '/usr/bin/head --lines=13 "' . expand('%:p') . '"'
                         \ . ' | ' . l:modeline_search
       " Note: [lb] sent the head a bad filename but v:shell_error
       "       indicates 0, which could be because the pipe to grep
@@ -444,7 +444,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       DGCTSGEcho '1st l:bash_cmd1: ' . l:bash_cmd1
       let l:modeline_embedded = system(l:bash_cmd1)
       if l:modeline_embedded == ''
-        let l:bash_cmd1 = '/usr/bin/tail --lines=5 ' . expand('%:p')
+        let l:bash_cmd1 = '/usr/bin/tail --lines=5 "' . expand('%:p') . '"'
                           \ . ' | ' . l:modeline_search
         DGCTSGEcho '2nd l:bash_cmd1: ' . l:bash_cmd1
         let l:modeline_embedded = system(l:bash_cmd1)
