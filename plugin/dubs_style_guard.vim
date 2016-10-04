@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2016.09.30
+" Last Modified: 2016.10.03
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -229,6 +229,7 @@ endfunction
 command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eval(<q-args>)]
 " To see the log:
 "   echo g:style_log
+"   TabMessage echo g:style_log
 " To clear the log:
 "   unlet g:style_log
 " NOTE: You have to use single quotes with Echo, e.g.,
