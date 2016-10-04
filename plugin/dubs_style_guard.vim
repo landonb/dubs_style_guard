@@ -501,12 +501,19 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       setlocal tw=78 ts=8 ft=text norl
       " 2011.01.27: Use setlocal, not set, so command applies just to cur buf.
       let b:dubs_style_index = s:dubs_style_file_modeline
+      DGCTSGEcho 'a help file'
     elseif (l:n_tabbed > 10) && (l:n_tabbed > (2 * l:n_spaced))
       " If the file is already mostly tabbed, setup tabbing.
       DGCTSGEcho 'Style guess: Tab-indented > 10 and more than 2x space starts'
       " Vim help files are 8 spaces per tab, but most other times
       " it's 4 spaces per tab. At least that's [lb]'s experience.
       let b:dubs_style_index = s:dubs_style_4_char_tabbed
+    elseif (l:n_tabbed > 0) && (l:n_spaced == 0)
+      DGCTSGEcho 'Style guess: Tab-indented > 0 and no space-starts'
+      let b:dubs_style_index = s:dubs_style_4_char_tabbed
+    elseif (l:n_spaced > 0) && (l:n_tabbed == 0)
+      DGCTSGEcho 'Style guess: No tab starts but space starts'
+      let b:dubs_style_index = s:dubs_style_2_char_spaced
     elseif expand('%:e') == 'rst'
       " Because of the ".. directive" convention in reST, which means blocks
       " often align after the third column, make rstdentation 3-spaced. Or 4.
@@ -518,6 +525,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       DGCTSGEcho 'dubs_style_index: ' . b:dubs_style_index
     else
       " Just use spaces.
+      DGCTSGEcho 'Style guess: no guess'
       let b:dubs_style_index = s:dubs_style_2_char_spaced
     endif
   endif " (a:dont_cycle == 1)
