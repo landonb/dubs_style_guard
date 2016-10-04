@@ -269,11 +269,7 @@ endfunction
 
 function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
 
-  let l:log_msgs = 1
-
-  if (l:log_msgs == 1)
-    DGCTSGEcho 'Setting style: ' . expand('%:p')
-  endif
+  DGCTSGEcho 'Setting style_: ' . expand('%:p')
 
   " FIXME: Check that the editorconfig plugin is installed, otherwise skip this.
   " Prefer an .editorconfig file over a .dubs_style.vim file or guessing.
@@ -287,9 +283,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       \ || (&modifiable == 0)
       \ || (bufname('%') == '-MiniBufExplorer-')
       \ || (s:editconf_f != ''))
-    if (l:log_msgs == 1)
-      DGCTSGEcho 'Style guide: not use_style'
-    endif
+    DGCTSGEcho 'Style guide: not use_style'
     let l:use_style = 0
   endif
 
@@ -380,10 +374,8 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     let l:n_tabbed = (system('pcregrep "^\t" ' . expand('%:p') . '| wc -l'))
     let l:n_spaced = substitute(l:n_spaced, "\n", "", "")
     let l:n_tabbed = substitute(l:n_tabbed, "\n", "", "")
-    if (l:log_msgs == 1)
-      DGCTSGEcho 'Tab styl anlyss: n_spaced: ' . l:n_spaced
-                           \ . ' / n_tabbed: ' . l:n_tabbed
-    endif
+    DGCTSGEcho 'Tab styl anlyss: n_spaced: ' . l:n_spaced
+                         \ . ' / n_tabbed: ' . l:n_tabbed
     " See also: tpope's Sleuth: https://github.com/tpope/vim-sleuth
     "      and: http://www.vim.org/scripts/script.php?script_id=1171
     "           DetectIndent: Automatically detect indent
@@ -511,9 +503,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       let b:dubs_style_index = s:dubs_style_file_modeline
     elseif (l:n_tabbed > 10) && (l:n_tabbed > (2 * l:n_spaced))
       " If the file is already mostly tabbed, setup tabbing.
-      if (l:log_msgs == 1)
-        DGCTSGEcho 'Style guess: Tab-indented'
-      endif
+      DGCTSGEcho 'Style guess: Tab-indented > 10 and more than 2x space starts'
       " Vim help files are 8 spaces per tab, but most other times
       " it's 4 spaces per tab. At least that's [lb]'s experience.
       let b:dubs_style_index = s:dubs_style_4_char_tabbed
@@ -521,9 +511,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       " Because of the ".. directive" convention in reST, which means blocks
       " often align after the third column, make rstdentation 3-spaced. Or 4.
       " I keep changing my mind.
-      if (l:log_msgs == 1)
-        DGCTSGEcho 'Style guess: Space-indented / rst'
-      endif
+      DGCTSGEcho 'Style guess: Space-indented / rst'
       "let b:dubs_style_index = s:dubs_style_3_char_spaced
       "let b:dubs_style_index = s:dubs_style_2_char_spaced
       let b:dubs_style_index = s:dubs_style_4_char_spaced
@@ -586,9 +574,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
   if (a:dont_cycle == 0) || (a:do_echom == 1)
     echomsg 'Whitespace Style: ' . &tabstop . ' ' . l:ws_style_units
   endif
-  if (l:log_msgs == 1)
-    DGCTSGEcho 'Whitespace Style: ' . &tabstop . ' ' . l:ws_style_units
-  endif
+  DGCTSGEcho 'Whitespace Style: ' . &tabstop . ' ' . l:ws_style_units
 
   " See also: plugin/ctab.vim, which translates tabs to spaces
   " if we're tabbing but not indenting (i.e., if we're pressing
