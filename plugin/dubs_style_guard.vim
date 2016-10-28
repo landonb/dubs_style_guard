@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2016.10.03
+" Last Modified: 2016.10.28
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -526,7 +526,10 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     else
       " Just use spaces.
       DGCTSGEcho 'Style guess: no guess'
-      let b:dubs_style_index = s:dubs_style_2_char_spaced
+      " 2016-10-28: From 2-spaces spaced to 4-spaces tabbed,
+      "             to where has the world come?
+      "let b:dubs_style_index = s:dubs_style_2_char_spaced
+      let b:dubs_style_index = s:dubs_style_4_char_tabbed
     endif
   endif " (a:dont_cycle == 1)
 
