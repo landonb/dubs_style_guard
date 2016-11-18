@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2016.10.28
+" Last Modified: 2016.11.17
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -434,12 +434,12 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       "       i.e., we sent the error string to the 'set' command.
       "       MAYBE: Check the syntax of l:modeline_embedded, maybe
       "              using matchstr.
-      DGCTSGEcho '1st l:bash_cmd1: ' . l:bash_cmd1
+      DGCTSGEcho 'Modeline search: 1st l:bash_cmd1: ' . l:bash_cmd1
       let l:modeline_embedded = system(l:bash_cmd1)
       if l:modeline_embedded == ''
         let l:bash_cmd1 = '/usr/bin/tail --lines=5 "' . expand('%:p') . '"'
                           \ . ' | ' . l:modeline_search
-        DGCTSGEcho '2nd l:bash_cmd1: ' . l:bash_cmd1
+        DGCTSGEcho 'Modeline search: 2nd l:bash_cmd1: ' . l:bash_cmd1
         let l:modeline_embedded = system(l:bash_cmd1)
       endif
       if l:modeline_embedded != ''
