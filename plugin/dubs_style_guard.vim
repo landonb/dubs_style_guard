@@ -527,8 +527,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       " I keep changing my mind.
       DGCTSGEcho 'Style guess: Space-indented / rst'
       "let b:dubs_style_index = s:dubs_style_3_char_spaced
-      "let b:dubs_style_index = s:dubs_style_2_char_spaced
-      let b:dubs_style_index = s:dubs_style_4_char_spaced
+      let b:dubs_style_index = s:dubs_style_2_char_spaced
       DGCTSGEcho 'dubs_style_index: ' . b:dubs_style_index
     else
       " Just use spaces.
