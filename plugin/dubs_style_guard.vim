@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2016.11.17
+" Last Modified: 2016.11.18
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -227,11 +227,16 @@ endfunction
 " Strange: Command name cannot be understored, e.g., DG_CTSG_Echo is no good.
 " But without the echom:
 command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eval(<q-args>)]
+" ===============
 " To see the log:
+" ===============
 "   echo g:style_log
 "   TabMessage echo g:style_log
+" ===============
 " To clear the log:
+" ===============
 "   unlet g:style_log
+" ===============
 " NOTE: You have to use single quotes with Echo, e.g.,
 "       __command__         __response__
 "       Echo Whatever       E121: Undefined variable: Whatever
@@ -513,7 +518,9 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       let b:dubs_style_index = s:dubs_style_4_char_tabbed
     elseif (l:n_spaced > 0) && (l:n_tabbed == 0)
       DGCTSGEcho 'Style guess: No tab starts but space starts'
-      let b:dubs_style_index = s:dubs_style_2_char_spaced
+      " 2016-11-18: 2, 4, next I'll just try 3 again.
+      "let b:dubs_style_index = s:dubs_style_2_char_spaced
+      let b:dubs_style_index = s:dubs_style_4_char_spaced
     elseif expand('%:e') == 'rst'
       " Because of the ".. directive" convention in reST, which means blocks
       " often align after the third column, make rstdentation 3-spaced. Or 4.
@@ -529,7 +536,14 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       " 2016-10-28: From 2-spaces spaced to 4-spaces tabbed,
       "             to where has the world come?
       "let b:dubs_style_index = s:dubs_style_2_char_spaced
-      let b:dubs_style_index = s:dubs_style_4_char_tabbed
+      "let b:dubs_style_index = s:dubs_style_4_char_tabbed
+      " 2016-11-18: Ug. I keep flip flopping. Here's the latest reasoning:
+      " PEP 8 says use 4 spaces for indentation
+      "   https://www.python.org/dev/peps/pep-0008/
+      " and Bash scripts should also use spaces
+      "   so copy-paste to terminal works
+      "   (without triggering tab completion).
+      let b:dubs_style_index = s:dubs_style_4_char_spaced
     endif
   endif " (a:dont_cycle == 1)
 
