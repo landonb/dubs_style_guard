@@ -1,11 +1,11 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2016.11.18
+" Last Modified: 2017.03.28
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
 " -------------------------------------------------------------------
-" Copyright © 2009, 2015-2016 Landon Bouma.
+" Copyright © 2009, 2015-2017 Landon Bouma.
 "
 " This file is part of Dubsacks.
 "
@@ -92,10 +92,10 @@ endif
 
 " This style is applied by default for new files and other files without
 " an apparent indent scheme already in place or whose file extension is
-" not recognized, such that DG_CycleThruStyleGuides doesn't enforce the style.
+" not recognized, such that CycleThruStyleGuides doesn't enforce the style.
 
-"autocmd BufEnter * call DG_CycleThruStyleGuides_SetMatch(
-autocmd BufEnter,BufRead * call DG_CycleThruStyleGuides_SetMatch(
+"autocmd BufEnter * call CycleThruStyleGuides_SetMatch(
+autocmd BufEnter,BufRead * call CycleThruStyleGuides_SetMatch(
                             \ s:dubs_style_2_char_spaced)
 
 " [lb] tried just BufEnter but it doesn't quite work -- e.g.,
@@ -104,25 +104,25 @@ autocmd BufEnter,BufRead * call DG_CycleThruStyleGuides_SetMatch(
 " settings are set (so we don't know it's the Quickfix window
 " on BufEnter, but on BufRead -- when it's settings are set --
 " then we can deduce that the buffer is the Quickfix buffer).
-"autocmd BufEnter * call s:DG_CycleThruStyleGuides_FixMatch()
-autocmd BufEnter,BufRead * call s:DG_CycleThruStyleGuides_FixMatch()
+"autocmd BufEnter * call s:CycleThruStyleGuides_FixMatch()
+autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_FixMatch()
 
 " ------------------------------------------------------
 " Map <Leader>e to Toggling Style Guide [E]nforcement
 " ------------------------------------------------------
 
 " The user can cycle through the set of pre-defined style guide templates.
-if !hasmapto('<Plug>DG_CycleThruStyleGuides')
+if !hasmapto('<Plug>DubsStyleGuard_CycleThruStyleGuides')
   map <silent> <unique> <Leader>e
-    \ <Plug>DG_CycleThruStyleGuides
+    \ <Plug>DubsStyleGuard_CycleThruStyleGuides
 endif
 " Map <Plug> to an <SID> function
-map <silent> <unique> <script>
-  \ <Plug>DG_CycleThruStyleGuides
-  \ :call <SID>DG_CycleThruStyleGuides(0, 1, 0)<CR>
+noremap <silent> <unique> <script>
+  \ <Plug>DubsStyleGuard_CycleThruStyleGuides
+  \ :call <SID>CycleThruStyleGuides(0, 1, 0)<CR>
 " And finally thunk to the script fcn.
-""function <SID>DG_CycleThruStyleGuides()
-""  call s:DG_CycleThruStyleGuides()
+""function <SID>CycleThruStyleGuides()
+""  call s:CycleThruStyleGuides()
 ""endfunction
 
 " 2012.10.03: I don't use the built-in Ctrl-e often -- in
@@ -130,8 +130,8 @@ map <silent> <unique> <script>
 " in the window; it doesn't do anything in insert mode. But
 " it seems too built-in to remap (see :h Ctrl-e and you'll
 " see it's only mapped to one key-combo).
-"  NO: noremap <C-e> :call <SID>DG_CycleThruStyleGuides()<CR><CR>
-"  NO: inoremap <C-e> <C-O>:call <SID>DG_CycleThruStyleGuides()<CR><CR>
+"  NO: noremap <C-e> :call <SID>CycleThruStyleGuides()<CR><CR>
+"  NO: inoremap <C-e> <C-O>:call <SID>CycleThruStyleGuides()<CR><CR>
 " 2014.11.18: I started using <Leader>e more often to switch styles
 " as I started working on different projects. But I also added more
 " intelligence to auto-detect the current project's style whenever
@@ -142,7 +142,7 @@ map <silent> <unique> <script>
 " ------------------------------------------------------
 
 " Initialize the variable used to track which template is active.
-function DG_CycleThruStyleGuides_SetMatch(style_index)
+function CycleThruStyleGuides_SetMatch(style_index)
 
   " NOTE: By checking exists, the style is only applied the very first time
   "       a buffer is opened (so you'll have to reload Vim to have it default
@@ -186,9 +186,9 @@ endfunction
 " ------------------------------------------------------
 
 " When a buffer is initially read, we'll try to guess its style.
-function s:DG_CycleThruStyleGuides_FixMatch()
+function s:CycleThruStyleGuides_FixMatch()
   if exists('b:dubs_style_index')
-    call <SID>DG_CycleThruStyleGuides(1, 0, 0)
+    call <SID>CycleThruStyleGuides(1, 0, 0)
   endif
   if exists('b:dubs_line_len_style')
     call <SID>DG_CycleThruLineLengthGuides(1)
@@ -202,12 +202,12 @@ if !hasmapto('<Plug>DG_CycleResetLocking')
   map <silent> <unique> <Leader>E
     \ <Plug>DG_CycleResetLocking
 endif
-map <silent> <unique> <script>
+noremap <silent> <unique> <script>
   \ <Plug>DG_CycleResetLocking
   \ :call <SID>DG_CycleResetLocking()<CR>
 function s:DG_CycleResetLocking()
   let b:dubs_style_locked = 0
-  call <SID>DG_CycleThruStyleGuides(1, 1, 1)
+  call <SID>CycleThruStyleGuides(1, 1, 1)
 endfunction
 
 " ------------------------------------------------------
@@ -246,7 +246,7 @@ command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eva
 " ------------------------------------------
 " The Style Guide Cycler
 
-function s:DG_CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
+function s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
 
   if exists('g:style_log')
     unlet g:style_log
@@ -267,12 +267,12 @@ function s:DG_CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
   endif
 
   if l:change_style == 1
-    call <SID>DG_CycleThruStyleGuides_(a:dont_cycle, a:do_echom, a:force_reset)
+    call <SID>CycleThruStyleGuides_(a:dont_cycle, a:do_echom, a:force_reset)
   endif
 
 endfunction
 
-function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
+function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
 
   DGCTSGEcho 'Setting style_: ' . expand('%:p')
 
@@ -416,7 +416,7 @@ function s:DG_CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     if filereadable(expand('%:p'))
       " 2015.04.10: If you open a file with a space in it's path, you'll see, e.g.,
       "      "./Electronica-House/Daft Punk/.audfs" 2L, 64C^[[2;2R
-      "      Error detected while processing function       "      <SNR>40_DG_CycleThruStyleGuides_FixMatch..<SNR>40_DG_CycleThruStyleGuides..<SNR>40_DG_CycleThru
+      "      Error detected while processing function       "      <SNR>40_CycleThruStyleGuides_FixMatch..<SNR>40_CycleThruStyleGuides..<SNR>40_DG_CycleThru
       "      StyleGuides_:
       "      line  217:
       "      E518: Unknown option: /usr/bin/head:
@@ -637,7 +637,7 @@ if !hasmapto('<Plug>DG_CycleThruLineLengthGuides')
     \ <Plug>DG_CycleThruLineLengthGuides
 endif
 " Map <Plug> to an <SID> function
-map <silent> <unique> <script>
+noremap <silent> <unique> <script>
   \ <Plug>DG_CycleThruLineLengthGuides
   \ :call <SID>DG_CycleThruLineLengthGuides(0)<CR>
 
@@ -646,7 +646,7 @@ if !hasmapto('<Plug>DG_CycleThruLineLengthReset')
   map <silent> <unique> <Leader>R
     \ <Plug>DG_CycleThruLineLengthReset
 endif
-map <silent> <unique> <script>
+noremap <silent> <unique> <script>
   \ <Plug>DG_CycleThruLineLengthReset
   \ :call <SID>DG_CycleThruLineLengthReset()<CR>
 function s:DG_CycleThruLineLengthReset()
