@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2017.03.28
+" Last Modified: 2017.07.05
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -257,7 +257,7 @@ function s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
     DGCTSGEcho 'Resetting style: ' . expand('%:p')
   endif
 
-	let l:change_style = 1
+  let l:change_style = 1
 
   if (a:dont_cycle == 1)
      \ && (b:dubs_style_locked == 1)
