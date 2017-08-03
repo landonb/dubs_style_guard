@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2017.07.05
+" Last Modified: 2017.08.02
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -455,6 +455,8 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     endif
 
     " Look for a dubs modeline file.
+    " '.;' searches from the directory of the current
+    "      file upwards until it finds the file.
     let s:modeline_f = findfile('.dubs_style.vim', '.;')
     let l:bash_cmd2 = ''
     let l:modeline_project = ''
