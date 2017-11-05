@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2017.08.02
+" Last Modified: 2017.11.04
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -79,9 +79,11 @@ let s:dubs_style_3_char_tabbed = 6
 let s:dubs_styles_count = s:dubs_style_4_char_spaced + 1
 
 " User interface.
+
 if !exists('g:dubs_style_preferred_expand_tab')
   let g:dubs_style_preferred_expand_tab = 0
 endif
+
 if !exists('g:dubs_style_preferred_indent')
   let g:dubs_style_preferred_indent = 2
 endif
@@ -116,10 +118,12 @@ if !hasmapto('<Plug>DubsStyleGuard_CycleThruStyleGuides')
   map <silent> <unique> <Leader>e
     \ <Plug>DubsStyleGuard_CycleThruStyleGuides
 endif
+
 " Map <Plug> to an <SID> function
 noremap <silent> <unique> <script>
   \ <Plug>DubsStyleGuard_CycleThruStyleGuides
   \ :call <SID>CycleThruStyleGuides(0, 1, 0)<CR>
+
 " And finally thunk to the script fcn.
 ""function <SID>CycleThruStyleGuides()
 ""  call s:CycleThruStyleGuides()
@@ -143,12 +147,10 @@ noremap <silent> <unique> <script>
 
 " Initialize the variable used to track which template is active.
 function CycleThruStyleGuides_SetMatch(style_index)
-
   " NOTE: By checking exists, the style is only applied the very first time
   "       a buffer is opened (so you'll have to reload Vim to have it default
   "       back, as opposed to us not checking exists here but always resetting
   "       the style whenever the user re-enters a buffer).
-
   if !exists('b:dubs_style_index')
     if (g:dubs_style_preferred_indent == 2)
       if (g:dubs_style_preferred_expand_tab == 0)
@@ -180,7 +182,6 @@ function CycleThruStyleGuides_SetMatch(style_index)
   if !exists('b:dubs_line_len_style')
     let b:dubs_line_len_style = 0
   endif
-
 endfunction
 
 " ------------------------------------------------------
@@ -202,9 +203,11 @@ if !hasmapto('<Plug>DG_CycleResetLocking')
   map <silent> <unique> <Leader>E
     \ <Plug>DG_CycleResetLocking
 endif
+
 noremap <silent> <unique> <script>
   \ <Plug>DG_CycleResetLocking
   \ :call <SID>DG_CycleResetLocking()<CR>
+
 function s:DG_CycleResetLocking()
   let b:dubs_style_locked = 0
   call <SID>CycleThruStyleGuides(1, 1, 1)
@@ -247,10 +250,10 @@ command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eva
 " The Style Guide Cycler
 
 function s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
-
   if exists('g:style_log')
     unlet g:style_log
   endif
+
   if (a:force_reset == 0)
     DGCTSGEcho 'Setting style: ' . expand('%:p')
   else
@@ -269,11 +272,9 @@ function s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
   if l:change_style == 1
     call <SID>CycleThruStyleGuides_(a:dont_cycle, a:do_echom, a:force_reset)
   endif
-
 endfunction
 
 function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
-
   DGCTSGEcho 'Setting style_: ' . expand('%:p')
 
   " FIXME: Check that the editorconfig plugin is installed, otherwise skip this.
@@ -416,8 +417,10 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     if filereadable(expand('%:p'))
       " 2015.04.10: If you open a file with a space in it's path, you'll see, e.g.,
       "      "./Electronica-House/Daft Punk/.audfs" 2L, 64C^[[2;2R
-      "      Error detected while processing function       "      <SNR>40_CycleThruStyleGuides_FixMatch..<SNR>40_CycleThruStyleGuides..<SNR>40_DG_CycleThru
-      "      StyleGuides_:
+      "      Error detected while processing function
+      "         <SNR>40_CycleThruStyleGuides_FixMatch
+      "           ..<SNR>40_CycleThruStyleGuides
+      "             ..<SNR>40_DG_CycleThruStyleGuides_:
       "      line  217:
       "      E518: Unknown option: /usr/bin/head:
       "      E486: Pattern not found: usr
@@ -425,8 +428,9 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       "      E486: Pattern not found: usr
       "      Press ENTER or type command to continue
       "
-      let l:bash_cmd1 = '/usr/bin/head --lines=13 "' . expand('%:p') . '"'
-                        \ . ' | ' . l:modeline_search
+      let l:bash_cmd1 =
+        \ '/usr/bin/head --lines=13 "' . expand('%:p') . '"'
+        \ . ' | ' . l:modeline_search
       " Note: [lb] sent the head a bad filename but v:shell_error
       "       indicates 0, which could be because the pipe to grep
       "       succeeded and that's what the v:shell_error represents.
@@ -442,8 +446,9 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       DGCTSGEcho 'Modeline search: 1st l:bash_cmd1: ' . l:bash_cmd1
       let l:modeline_embedded = system(l:bash_cmd1)
       if l:modeline_embedded == ''
-        let l:bash_cmd1 = '/usr/bin/tail --lines=5 "' . expand('%:p') . '"'
-                          \ . ' | ' . l:modeline_search
+        let l:bash_cmd1 =
+          \ '/usr/bin/tail --lines=5 "' . expand('%:p') . '"'
+          \ . ' | ' . l:modeline_search
         DGCTSGEcho 'Modeline search: 2nd l:bash_cmd1: ' . l:bash_cmd1
         let l:modeline_embedded = system(l:bash_cmd1)
       endif
@@ -622,7 +627,6 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
   "             I'd rather my delete back up by one and not just back up
   "             to the previous tab stop, 'cause I still gotta type spaces
   "             so it's really just more keypresses total.
-
 endfunction
 
 " ------------------------------------------
@@ -638,6 +642,7 @@ if !hasmapto('<Plug>DG_CycleThruLineLengthGuides')
   map <silent> <unique> <Leader>r
     \ <Plug>DG_CycleThruLineLengthGuides
 endif
+
 " Map <Plug> to an <SID> function
 noremap <silent> <unique> <script>
   \ <Plug>DG_CycleThruLineLengthGuides
@@ -648,9 +653,11 @@ if !hasmapto('<Plug>DG_CycleThruLineLengthReset')
   map <silent> <unique> <Leader>R
     \ <Plug>DG_CycleThruLineLengthReset
 endif
+
 noremap <silent> <unique> <script>
   \ <Plug>DG_CycleThruLineLengthReset
   \ :call <SID>DG_CycleThruLineLengthReset()<CR>
+
 function s:DG_CycleThruLineLengthReset()
   let b:dubs_line_len_style = -1
   call <SID>DG_CycleThruLineLengthGuides(0)
@@ -671,7 +678,6 @@ function s:DG_CycleThruLineLengthGuides(on_bufenter)
 endfunction
 
 function s:DG_CycleThruLineLengthGuides_(on_bufenter)
-
   if (a:on_bufenter == 0)
     let b:dubs_line_len_style = b:dubs_line_len_style + 1
     if (b:dubs_line_len_style >= s:dubs_llen_count)
@@ -723,6 +729,5 @@ function s:DG_CycleThruLineLengthGuides_(on_bufenter)
             \ . printf('tw=%-2s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
   endif
-
 endfunction
 
