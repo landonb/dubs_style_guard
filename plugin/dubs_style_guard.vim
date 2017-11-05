@@ -319,22 +319,6 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
   " Below, we'll set tabstop and shiftwidth.
   " Ignoring: copyindent, preserveindent.
 
-  " 2014.11.18: [lb] happened to load the "Highlight long lines" page
-  " on Wikia <http://vim.wikia.com/wiki/Highlight_long_lines> and
-  " thankfully I found out Vim 7.3 includes a newer, better way to
-  " highlight line length!
-  " See below: :set colorcolumn=+1,+2,+3
-  " The default color is a lightish pink.
-  :hi ColorColumn ctermbg=lightgrey guibg=lightgrey
-  " ErrorMsg defaults to
-  "  xxx term=standout ctermfg=15 ctermbg=4 guifg=White guibg=Red
-  " For color reference see :h cterm-colors
-  " Here's the list of light colors:
-  "  LightRed LightGreen LightCyan LightMagenta LightYellow LightGray
-  " [lb] tried Red and LightRed but red is too loud and obnoxious.
-  " So then I just tried LightBlue and it seems to fit in nicely.
-  :hi MyErrorMsg term=standout ctermfg=15 ctermbg=4 guibg=LightBlue
-
   if (a:dont_cycle == 1) && (l:use_style == 1)
 
     " If user is not deliberately toggling the tab style, intelligently set
