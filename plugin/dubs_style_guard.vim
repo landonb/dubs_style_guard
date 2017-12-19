@@ -1,6 +1,6 @@
 " File: dubs_style_guard.vim
 " Author: Landon Bouma (landonb &#x40; retrosoft &#x2E; com)
-" Last Modified: 2017.11.04
+" Last Modified: 2017.12.19
 " Project Page: https://github.com/landonb/dubs_style_guard
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 " License: GPLv3
@@ -488,6 +488,9 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     if l:found_modeline != ''
       " Either the file or a .dubs_style.vim file contains a modeline.
       DGCTSGEcho 'execute set ' . l:found_modeline
+      " 2017-12-16: I saw an error using Vim over SSH:
+      "     E518: Unknown option: /usr/bin/head:
+      "   I didn't dig any deeper....
       execute 'set ' . l:found_modeline
       let b:dubs_style_index = s:dubs_style_file_modeline
     elseif expand('%:e') == 'help'
