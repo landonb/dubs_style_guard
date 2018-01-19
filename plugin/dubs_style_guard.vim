@@ -514,7 +514,9 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       DGCTSGEcho 'Style guess: No tab starts but space starts'
       " 2016-11-18: 2, 4, next I'll just try 3 again.
       "let b:dubs_style_index = s:dubs_style_2_char_spaced
-      let b:dubs_style_index = s:dubs_style_4_char_spaced
+      "let b:dubs_style_index = s:dubs_style_4_char_spaced
+      " 2018-01-19: Heh. Back to 2.
+      let b:dubs_style_index = s:dubs_style_2_char_spaced
     elseif expand('%:e') == 'rst'
       " Because of the ".. directive" convention in reST, which means blocks
       " often align after the third column, make rstdentation 3-spaced. Or 4.
