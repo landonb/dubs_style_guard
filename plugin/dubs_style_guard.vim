@@ -538,7 +538,12 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       " and Bash scripts should also use spaces
       "   so copy-paste to terminal works
       "   (without triggering tab completion).
-      let b:dubs_style_index = s:dubs_style_4_char_spaced
+      "let b:dubs_style_index = s:dubs_style_4_char_spaced
+      " 2018-01-29: Another 1, Back to 2.
+      "   (Was I using 4 because of reST? Even then,
+      "    you can make 4 from 2 but not 2 from 4,
+      "    so 2 is more flexy.)
+      let b:dubs_style_index = s:dubs_style_2_char_spaced
     endif
   endif " (a:dont_cycle == 1)
 
