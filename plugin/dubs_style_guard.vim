@@ -288,7 +288,7 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       \ || (&buftype == 'quickfix')
       \ || (&modifiable == 0)
       \ || (bufname('%') == '-MiniBufExplorer-')
-      \ || (s:editconf_f != ''))
+      \ || ((s:editconf_f != '') && (a:dont_cycle != 0)))
     DGCTSGEcho 'Style guide: not use_style'
     let l:use_style = 0
   endif
