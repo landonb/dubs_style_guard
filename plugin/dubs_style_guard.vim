@@ -360,8 +360,8 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     "       I.e., bufdo let found = found + (system(...))
     " NOTE: Using Perl-Compatible RegEx because egrep doesn't know "^\t".
     "       Note that we could also use grep -P.
-    let l:n_spaced = (system('pcregrep "^ " ' . expand('%:p') . '| wc -l'))
-    let l:n_tabbed = (system('pcregrep "^\t" ' . expand('%:p') . '| wc -l'))
+    let l:n_spaced = (system('pcregrep "^ " "' . expand('%:p') . '" | wc -l'))
+    let l:n_tabbed = (system('pcregrep "^\t" "' . expand('%:p') . '" | wc -l'))
     let l:n_spaced = substitute(l:n_spaced, "\n", "", "")
     let l:n_tabbed = substitute(l:n_tabbed, "\n", "", "")
     DGCTSGEcho 'Tab styl anlyss: n_spaced: ' . l:n_spaced
