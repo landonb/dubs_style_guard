@@ -32,7 +32,7 @@ as it's being typed.
 The plugin prevents itself from running on special buffers,
 like the Quickfix and Location lists.
 
-Hint: When you first open a Vim *help* file, it'll be displayed
+Hint: When you first open a Vim help file, it'll be displayed
 specially, like all help files. To edit it, just type
 `set ft=text` and start editing. To reset the style back
 to help, type `\E` and the modeline will be re-read
