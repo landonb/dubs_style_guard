@@ -1,5 +1,5 @@
-Dubsacks Vim — Style Guard
-==========================
+Dubs Vim — Style Guard
+======================
 
 About This Plugin
 -----------------
@@ -58,10 +58,10 @@ Modeline and Modeline Files
 ---------------------------
 
 Modelines are common to Vim, but they're generally only
-read for help files. Dubsacks always looks for them in
+read for help files. Dubs Vim always looks for them in
 the first five or last five lines of a file.
 
-Dubsacks also searches up the directory hierarchy for a
+Dubs Vim also searches up the directory hierarchy for a
 special modeline file, ``.dubs_style.vim``, that can
 contain a list of filetypes and modelines, so you can
 easily define the style for different projects and for
