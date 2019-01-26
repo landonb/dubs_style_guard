@@ -1,8 +1,11 @@
-Dubs Vim — Style Guard
-======================
+##############################
+Dubs Vim |em_dash| Style Guard
+##############################
+
+.. |em_dash| unicode:: 0x2014 .. em dash
 
 About This Plugin
------------------
+=================
 
 This plugin senses a file's whitespace style and sets Vim accordingly.
 
@@ -31,7 +34,7 @@ to help, type ``\E`` and the modeline will be re-read
 (caveat: most help files use modelines, but not all of them).
 
 Installation
-------------
+============
 
 Standard Pathogen installation:
 
@@ -55,7 +58,7 @@ Online help:
    :help dubs-style-guard
 
 Modeline and Modeline Files
----------------------------
+===========================
 
 Modelines are common to Vim, but they're generally only
 read for help files. Dubs Vim always looks for them in
@@ -72,7 +75,7 @@ file of the same name in the source, in the same directory
 as this readme.
 
 Similar Plugins
----------------
+===============
 
 Style-enforcers:
 
@@ -111,7 +114,7 @@ Whitespace-detectors:
 - `DetectIndent <http://www.vim.org/scripts/script.php?script_id=1171>`__
 
 Key Mappings
-------------
+============
 
 =================================  ==================================  ==============================================================================
  Key Mapping                        Description                         Notes
