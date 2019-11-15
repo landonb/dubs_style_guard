@@ -412,6 +412,8 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
       "      E486: Pattern not found: usr
       "      Press ENTER or type command to continue
       "
+      " FIXME/2019-11-14: De-couple this MAGIC_NUMBER: 13.
+      " - Modeline is expected to be in first or final 13 lines of file.
       let l:bash_cmd1 =
         \ '/usr/bin/head --lines=13 "' . expand('%:p') . '"'
         \ . ' | ' . l:modeline_search
