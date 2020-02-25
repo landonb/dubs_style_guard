@@ -300,9 +300,11 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
 
   if (l:use_style == 1) && (a:dont_cycle == 0)
     if (&filetype == 'help')
-      " When deliberately setting style, if a help file, make text, 8-tabbed.
+      " When the user starts cycling through the styles, if they're looking
+      " at a help file, change its filetype to 'text' first, so they can edit
+      " it more easily. And leave the tabbing as it is (which is probably
+      " 8-char-tabbed). The user can cycle again to change tabbing.
       set filetype=text
-      let b:dubs_style_index = s:dubs_style_8_char_tabbed
     else
       let b:dubs_style_index = b:dubs_style_index + 1
       if (b:dubs_style_index >= s:dubs_styles_count)
