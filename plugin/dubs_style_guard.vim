@@ -307,7 +307,7 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
       set filetype=text
     else
       let b:dubs_style_index = b:dubs_style_index + 1
-      if (b:dubs_style_index >= s:dubs_styles_count)
+      if (b:dubs_style_index >= b:dubs_styles_count_ft)
         let b:dubs_style_index = 0
       endif
     endif
@@ -549,6 +549,12 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
       "    you can make 4 from 2 but not 2 from 4,
       "    so 2 is more flexy.)
       let b:dubs_style_index = s:dubs_style_2_char_spaced
+    endif
+
+    if (&filetype == 'help')
+      let b:dubs_styles_count_ft = s:dubs_style_8_char_tabbed + 1
+    else
+      let b:dubs_styles_count_ft = s:dubs_styles_count
     endif
   endif " (a:dont_cycle == 1)
 
