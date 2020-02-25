@@ -66,8 +66,13 @@ let s:dubs_style_file_modeline = -1
 let s:dubs_style_2_char_spaced = 0
 let s:dubs_style_4_char_tabbed = 1
 let s:dubs_style_4_char_spaced = 2
-" These are not cycleable with \e (unless you bump dubs_styles_count [and reorder]):
+" The 8-char tabbed setting is common to help text.
+" - This style is not generally an available style that the user may cycle
+"   through, but it's included automatically for ft=help files. (You could
+"   make always available by increasing s:dubs_styles_count).
 let s:dubs_style_8_char_tabbed = 3
+" Per s:dubs_styles_count (set below), the following settings
+" are not cycleable with \e (unless you bump dubs_styles_count):
 let s:dubs_style_2_char_tabbed = 4
 let s:dubs_style_3_char_spaced = 5
 let s:dubs_style_3_char_tabbed = 6
@@ -198,7 +203,7 @@ endfunction
 
 " ------------------------------------------------------
 
-" <Leader>E simply resets the style (possibly be reparsing the file).
+" <Leader>E resets the style (possibly by reading the file for its modeline).
 if !hasmapto('<Plug>DG_CycleResetLocking')
   map <silent> <unique> <Leader>E
     \ <Plug>DG_CycleResetLocking
@@ -304,11 +309,10 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
         let b:dubs_style_index = 0
       endif
     endif
-    " A "locked" style simply means the user is deliberately
-    " cycling through the styles, so we shouldn't reset the
-    " style for the buffer automatically. This should only
-    " matter if the autocmd specifies BufEnter, which it doesn't
-    " anymore.
+    " A 'locked' style simply means the user is deliberately cycling
+    " through the styles, so we shouldn't reset the style for the
+    " buffer automatically. This should only matter if the autocmd
+    " specifies BufEnter, which it doesn't anymore.
     let b:dubs_style_locked = 1
   endif
 
@@ -490,9 +494,6 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
     if l:found_modeline != ''
       " Either the file or a .dubs_style.vim file contains a modeline.
       DGCTSGEcho 'execute set ' . l:found_modeline
-      " 2017-12-16: I saw an error using Vim over SSH:
-      "     E518: Unknown option: /usr/bin/head:
-      "   I didn't dig any deeper....
       execute 'set ' . l:found_modeline
       let b:dubs_style_index = s:dubs_style_file_modeline
     elseif expand('%:e') == 'help'
@@ -644,7 +645,7 @@ noremap <silent> <unique> <script>
   \ <Plug>DG_CycleThruLineLengthGuides
   \ :call <SID>DG_CycleThruLineLengthGuides(0)<CR>
 
-" <Leader>E simply resets the style (possibly be reparsing the file).
+" <Leader>R resets the long-line "enforcement" (three-column rhs vertical stripe).
 if !hasmapto('<Plug>DG_CycleThruLineLengthReset')
   map <silent> <unique> <Leader>R
     \ <Plug>DG_CycleThruLineLengthReset
