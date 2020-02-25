@@ -275,11 +275,11 @@ function s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
   endif
 
   if l:change_style == 1
-    call <SID>CycleThruStyleGuides_(a:dont_cycle, a:do_echom, a:force_reset)
+    call <SID>CycleThruStyleGuides_(a:dont_cycle, a:do_echom)
   endif
 endfunction
 
-function s:CycleThruStyleGuides_(dont_cycle, do_echom, force_reset)
+function s:CycleThruStyleGuides_(dont_cycle, do_echom)
   DGCTSGEcho 'Setting style_: ' . expand('%:p')
 
   " FIXME: Check that the editorconfig plugin is installed, otherwise skip this.
