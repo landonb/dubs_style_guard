@@ -73,7 +73,7 @@ Style-enforcers:
     - For the Vim plugin, download
       EditorConfig Vim Plugin
       <https://github.com/editorconfig/editorconfig-vim>
-      to your `~/.vim/bundle` directory.
+      to, e.g., `~/.vim/pack/editorconfig/start/editorconfig-vim`
 
   - I highly recommend using
     EditorConfig <http://editorconfig.org/>
