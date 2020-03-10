@@ -298,6 +298,10 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
     let l:use_style = 0
   endif
 
+  if !exists('b:dubs_styles_count_ft')
+    let b:dubs_styles_count_ft = s:dubs_styles_count
+  endif
+
   if (l:use_style == 1) && (a:dont_cycle == 0)
     if (&filetype == 'help')
       " When the user starts cycling through the styles, if they're looking
