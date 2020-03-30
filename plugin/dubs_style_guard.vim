@@ -740,3 +740,17 @@ function s:DG_CycleThruLineLengthGuides_(on_bufenter)
   endif
 endfunction
 
+" ------------------------------------------
+" EditorConfig enablement
+
+" From editoconfig:README.rst:
+let g:EditorConfig_exclude_patterns = ['fugitive://.*']
+
+" 2020-03-29: Since when did this become necessary?
+" - I think the EditorConfig rewrite of its vim-core parser
+"   on 2019-05-20, but hard to tell, that was a very disruptive
+"   commit.
+"   - What's V. Strange is that this is not documented in the README,
+"     though other topics are. But this seems key to the whole thing!
+EditorConfigEnable
+
