@@ -223,6 +223,16 @@ endfunction
 " ------------------------------------------------------
 
 " ------------------------------------------
+
+" (lb): The `expand` help indicates:
+" 	      Note: Use |shellescape()| or |::S| with |expand()| or |fnamemodify()|
+" 	      to escape special characters in a command argument.
+"       but I'm not quite sure that the :S is all about, not in docs, didn't work for me.
+function s:ShellEscapedFullPath()
+  return shellescape(expand('%:p'))
+endfunction
+
+" ------------------------------------------
 " "Echo" to variable
 
 " https://stackoverflow.com/questions/8629452/is-it-possible-to-clear-message-history-in-gvim
@@ -409,6 +419,7 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
     let l:modeline_search = l:modeline_grep . l:modeline_seds
     let l:modeline_embedded = ''
     if filereadable(expand('%:p'))
+      let l:escaped_path = <SID>ShellEscapedFullPath()
       " 2015.04.10: If you open a file with a space in it's path, you'll see, e.g.,
       "      "./Electronica-House/Daft Punk/.audfs" 2L, 64C^[[2;2R
       "      Error detected while processing function
@@ -425,7 +436,7 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
       " FIXME/2019-11-14: De-couple this MAGIC_NUMBER: 13.
       " - Modeline is expected to be in first or final 13 lines of file.
       let l:bash_cmd1 =
-        \ '/usr/bin/head --lines=13 "' . expand('%:p') . '"'
+        \ '/usr/bin/head --lines=13 ' . l:escaped_path
         \ . ' | ' . l:modeline_search
       " Note: [lb] sent the head a bad filename but v:shell_error
       "       indicates 0, which could be because the pipe to grep
@@ -443,7 +454,7 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
       let l:modeline_embedded = system(l:bash_cmd1)
       if l:modeline_embedded == ''
         let l:bash_cmd1 =
-          \ '/usr/bin/tail --lines=5 "' . expand('%:p') . '"'
+          \ '/usr/bin/tail --lines=5 ' . l:escaped_path
           \ . ' | ' . l:modeline_search
         DGCTSGEcho 'Modeline search: 2nd l:bash_cmd1: ' . l:bash_cmd1
         let l:modeline_embedded = system(l:bash_cmd1)
