@@ -397,8 +397,8 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
     " We can also look for modeline strings.
     " Test: tail doc-------dubs_cycloplan.txt \
     "       | /bin/egrep '^\W*vim:([\=\:a-z0-9]+)\W*$' \
-    "       | /bin/sed 's/([\=\:a-z0-9]+)\W*$/\1/' \
-    "       | /bin/sed 's/:/ /g'
+    "       | /usr/bin/env sed 's/([\=\:a-z0-9]+)\W*$/\1/' \
+    "       | /usr/bin/env sed 's/:/ /g'
     "
     " We'll look for a modeline in the file itself.
     let l:modeline_grep_prefix = 'egrep --max-count=1 "^\W*'
@@ -408,12 +408,12 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
     let l:modeline_grep =
       \ l:modeline_grep_prefix . 'vim\s?' . l:modeline_grep_postfix
     let l:modeline_seds_prefix =
-      \ '| /bin/sed "s/^\W*'
+      \ '| /usr/bin/env sed "s/^\W*'
     " SYNC_ME: l:modeline_grep_postfix and l:modeline_seds_postfix.
     let l:modeline_seds_postfix =
       \ ':\([\=\:a-z0-9 ]\+\)\W*$/\1/"'
-      \ . ' | /bin/sed "s/:/ /g"'
-      \ . ' | /bin/sed "s/\bset\b/ /g"'
+      \ . ' | /usr/bin/env sed "s/:/ /g"'
+      \ . ' | /usr/bin/env sed "s/\bset\b/ /g"'
     let l:modeline_seds =
       \ l:modeline_seds_prefix . 'vim\s\?' . l:modeline_seds_postfix
     let l:modeline_search = l:modeline_grep . l:modeline_seds
