@@ -454,8 +454,9 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
       DGCTSGEcho 'Modeline search: 1st l:bash_cmd1: ' . l:bash_cmd1
       let l:modeline_embedded = system(l:bash_cmd1)
       if l:modeline_embedded == ''
+        " - NOTE/2020-08-26 14:55: macOS head has -n, but not --lines.
         let l:bash_cmd1 =
-          \ '/usr/bin/tail --lines=5 ' . l:escaped_path
+          \ '/usr/bin/tail -n 5 ' . l:escaped_path
           \ . ' | ' . l:modeline_search
         DGCTSGEcho 'Modeline search: 2nd l:bash_cmd1: ' . l:bash_cmd1
         let l:modeline_embedded = system(l:bash_cmd1)
