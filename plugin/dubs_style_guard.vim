@@ -435,8 +435,9 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
       "
       " FIXME/2019-11-14: De-couple this MAGIC_NUMBER: 13.
       " - Modeline is expected to be in first or final 13 lines of file.
+      " - NOTE/2020-08-26 14:55: macOS head has -n, but not --lines.
       let l:bash_cmd1 =
-        \ '/usr/bin/head --lines=13 ' . l:escaped_path
+        \ '/usr/bin/head -n 13 ' . l:escaped_path
         \ . ' | ' . l:modeline_search
       " Note: [lb] sent the head a bad filename but v:shell_error
       "       indicates 0, which could be because the pipe to grep
