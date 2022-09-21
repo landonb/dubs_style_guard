@@ -94,7 +94,7 @@ if !exists('g:dubs_style_preferred_indent')
 endif
 
 " ------------------------------------------------------
-" Nuts to ~/.vim/ftplugin/ and setup global autocmd
+" Setup global autocmd (as opposed to file-specific ~/.vim/ftplugin/)
 " ------------------------------------------------------
 
 " This style is applied by default for new files and other files without
