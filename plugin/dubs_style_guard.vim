@@ -748,7 +748,7 @@ function s:DG_CycleThruLineLengthGuides_(on_bufenter)
   if a:on_bufenter == 0
     echomsg 'Long-line enforcement: '
             \ . printf('match=%-6s', l:match_description)
-            \ . printf('tw=%-2s', &textwidth)
+            \ . printf('tw=%-3s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
   endif
 endfunction
