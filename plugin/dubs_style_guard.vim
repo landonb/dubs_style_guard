@@ -512,8 +512,8 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
 
     if l:found_modeline != ''
       " Either the file or a .dubs_style.vim file contains a modeline.
-      DGCTSGEcho 'execute set ' . l:found_modeline
-      execute 'set ' . l:found_modeline
+      DGCTSGEcho 'execute setlocal ' . l:found_modeline
+      execute 'setlocal ' . l:found_modeline
       let b:dubs_style_index = s:dubs_style_file_modeline
     elseif expand('%:e') == 'help'
       " From the bottom of most help files:
