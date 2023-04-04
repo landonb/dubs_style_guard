@@ -53,20 +53,14 @@ let g:plugin_dubs_style_guard = 1
 " Smart Style Guide Functionality
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-" Oftentimes, Vim settings are set to suit a particular developer's
-" tastes, but sometimes the settings are set to match the style of a
-" specific project.
-"
-" So while you might want to laugh derisively at anyone who doesn't
-" vim:et:ts=2:sw=2, you should play well with others and conform when
-" needed.
-
-" Here we define a set or pre-canned styles.
+" If no modeline, .editorconfig, or other external settings identified,
+" fallback on these predefined styles (which the user can also easily
+" cycle through).
 let s:dubs_style_file_modeline = -1
 let s:dubs_style_2_char_spaced = 0
 let s:dubs_style_4_char_tabbed = 1
 let s:dubs_style_4_char_spaced = 2
-" The 8-char tabbed setting is common to help text.
+" The 8-char tabbed setting is common to :help text.
 " - This style is not generally an available style that the user may cycle
 "   through, but it's included automatically for ft=help files. (You could
 "   make always available by increasing s:dubs_styles_count).
@@ -246,12 +240,12 @@ endfunction
 " But without the echom:
 command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eval(<q-args>)]
 " ===============
-" To see the log:
+" CPYST: To see the log:
 " ===============
 "   echo g:style_log
 "   TabMessage echo g:style_log
 " ===============
-" To clear the log:
+" CPYST: To clear the log:
 " ===============
 "   unlet g:style_log
 " ===============
