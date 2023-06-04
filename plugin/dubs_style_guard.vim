@@ -137,9 +137,9 @@ noremap <silent> <unique> <script>
   \ :call <SID>CycleThruStyleGuides(0, 1, 0)<CR>
 
 " And finally thunk to the script fcn.
-""function <SID>CycleThruStyleGuides()
-""  call s:CycleThruStyleGuides()
-""endfunction
+"  "function <SID>CycleThruStyleGuides()
+"  "  call s:CycleThruStyleGuides()
+"  "endfunction
 
 " 2012.10.03: I don't use the built-in Ctrl-e often -- in
 " command and select mode, it moves the buffer one line up
