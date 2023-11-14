@@ -410,6 +410,7 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
     " We'll look for a modeline in the file itself.
     let l:modeline_grep_prefix = 'egrep --max-count=1 "^\W*'
     " SYNC_ME: l:modeline_grep_postfix and l:modeline_seds_postfix.
+    " SAVVY: \W: non-word characters: [^a-zA-Z0-9_]
     let l:modeline_grep_postfix = ':([\=\:a-z0-9 ]+)\W*$" '
     " NOTE: grep syntax is just '?' but in sed you'll see '\?'.
     let l:modeline_grep =
