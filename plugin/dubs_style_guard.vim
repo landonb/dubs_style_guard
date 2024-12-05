@@ -341,7 +341,8 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
 
   " We always don't use "soft tabs".
   setlocal softtabstop=0
-  " Note: If you use ctab.vim and set softtabstop, you'll bork the undo stack.
+  " Note: If you use dubs_edit_juice/plugin/smart-tabs.vim and set
+  "       softtabstop, you'll bork the undo stack.
   " Bad?: setlocal softtabstop=3
   " Below, we'll set tabstop and shiftwidth.
   " Ignoring: copyindent, preserveindent.
@@ -636,15 +637,16 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
   endif
   DGCTSGEcho 'Whitespace Style: ' . &tabstop . ' ' . l:ws_style_units
 
-  " See also: plugin/ctab.vim, which translates tabs to spaces
-  " if we're tabbing but not indenting (i.e., if we're pressing
+  " See also: dubs_edit_juice/plugin/smart-tabs.vim, which translates tabs
+  " to spaces if we're tabbing but not indenting (i.e., if we're pressing
   " the tab key because we want to quickly add spaces to help us
   " align text).
   "  Note also: The Intelligent Indent smart tabber also smartly deletes
   "             by deleting to the previous tab stop... which might be
   "             annoying, so maybe change softtabstop to something less.
-  " 2014.11.18: Weird: I set softtabstop to 3 after adding plugin/ctab.vim
-  "             and now the undo stack doesn't work!
+  " 2014.11.18: Weird: I set softtabstop to 3 after adding
+  "             dubs_edit_juice/plugin/smart-tabs.vim and now the undo
+  "             stack doesn't work!
   "             Well, I disabled softtabstop, and it doesn't fail as often,
   "             but I'm still having undo problems.
   " Here's one try:
