@@ -184,26 +184,26 @@ Key Mappings
 =================================  ==================================  ==============================================================================
  Key Mapping                        Description                         Notes
 =================================  ==================================  ==============================================================================
- ``\e``                             Cycle Through Whitespace Styles     Cycles through the various syntax enforcement profiles.
+ ``\de``                            Cycle Through Whitespace Styles     Cycles through the various syntax enforcement profiles.
                                                                         Currently, just two are active (spaced with 2 spaces/indent,
                                                                         and tabbed with 4 character widths/indent), though more are
                                                                         defined (six total for the combinations of tabbed or spaced
                                                                         and 2, 3, or 4 characters/indent).
 ---------------------------------  ----------------------------------  ------------------------------------------------------------------------------
- ``\E``                             Reset Whitespace Style              Resets the buffer's whitespace configuration to either the
+ ``\dE``                            Reset Whitespace Style              Resets the buffer's whitespace configuration to either the
                                                                         file's modeline, the project's modeline, the deduced value
                                                                         (by counting and comparing lines that start with spaces versus
                                                                         tabs), or the default value set by the user
                                                                         (using ``g:dubs_style_preferred_expand_tab``
                                                                         and ``g:dubs_style_preferred_indent``).
 ---------------------------------  ----------------------------------  ------------------------------------------------------------------------------
- ``\r``                             Cycle Through Long-Line Features    Cycles through the various long-line sytles.
+ ``\dr``                            Cycle Through Long-Line Features    Cycles through the various long-line sytles.
                                                                         Currently, there are four styles -- just show a subtle column
                                                                         near the 80-character mark, also highlight long lines and
                                                                         automatically wrap long lines as they're typed, only autowrap,
                                                                         and show and do nothing with regard to long lines.
 ---------------------------------  ----------------------------------  ------------------------------------------------------------------------------
- ``\R``                             Reset Long-Line Feature             Resets the long-line feature to the default, which is to just show
+ ``\dR``                            Reset Long-Line Feature             Resets the long-line feature to the default, which is to just show
                                                                         a subtle column near the 80-character mark but not to do anything else.
 ---------------------------------  ----------------------------------  ------------------------------------------------------------------------------
  ``:match none``                    Hide highlighted                    Use the command ``:match none`` to disable highlighting,

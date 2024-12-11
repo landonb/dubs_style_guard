@@ -35,14 +35,15 @@
 " the path and specify the style therein. Use Vim modeline syntax,
 " and filter by file type, if necessary.
 "
-" Or, you can manually switch between whitespace styles using <Leader>e.
+" Or, you can manually switch between whitespace styles using <Leader>de.
 " Caveat: The author prefers 2-character spaced indentation, but I also
 "         work with 4-character tabbed indentation, so those are the two
 "         recognized styles. You can easily modify the code below to use
 "         different styles or to add more styles to the list.
 "
 " You can also enable and disable visual wrapping, automatic long-line
-" breaking, and long-line highlighting using <Leader>w.
+" breaking, and long-line highlighting using <Leader>dw from:
+"   https://github.com/landonb/dubs_toggle_textwrap
 
 if exists("g:plugin_dubs_style_guard") || &cp
   finish
@@ -122,12 +123,13 @@ autocmd BufEnter,BufRead * call CycleThruStyleGuides_SetMatch(
 autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_FixMatch()
 
 " ------------------------------------------------------
-" Map <Leader>e to Toggling Style Guide [E]nforcement
+" Toggle Style Guide Enforcement
 " ------------------------------------------------------
 
 " The user can cycle through the set of pre-defined style guide templates.
+" - HSTRY/2024-12-11: Was <Leader>e, but I've moved Dubs maps under \d.
 if !hasmapto('<Plug>DubsStyleGuard_CycleThruStyleGuides')
-  map <silent> <unique> <Leader>e
+  nmap <silent> <unique> <Leader>de
     \ <Plug>DubsStyleGuard_CycleThruStyleGuides
 endif
 
@@ -148,12 +150,14 @@ noremap <silent> <unique> <script>
 " see it's only mapped to one key-combo).
 "  NO: noremap <C-e> :call <SID>CycleThruStyleGuides()<CR><CR>
 "  NO: inoremap <C-e> <C-O>:call <SID>CycleThruStyleGuides()<CR><CR>
-" 2014.11.18: I started using <Leader>e more often to switch styles
+" 2014.11.18: I started using <Leader>de more often to switch styles
 " as I started working on different projects. But I also added more
 " intelligence to auto-detect the current project's style whenever
 " switching buffers. So I still don't manually switch styles very
 " often, but it's still at least proving itself to be handy when
 " needed.
+" - 2024-12-11: I rarely do any manual style switching.
+"   - Mostly EditorConfig and modelines do all the magic.
 
 " ------------------------------------------------------
 
@@ -210,9 +214,10 @@ endfunction
 
 " ------------------------------------------------------
 
-" <Leader>E resets the style (possibly by reading the file for its modeline).
+" Reset the style (possibly by reading the file for its modeline).
+" - HSTRY/2024-12-11: Was <Leader>E, but I've moved Dubs maps under \d.
 if !hasmapto('<Plug>DG_CycleResetLocking')
-  map <silent> <unique> <Leader>E
+  nmap <silent> <unique> <Leader>dE
     \ <Plug>DG_CycleResetLocking
 endif
 
@@ -669,8 +674,10 @@ let s:dubs_llen_with_highlight = 2
 let s:dubs_llen_all_off = 3
 let s:dubs_llen_count = s:dubs_llen_all_off + 1
 
+" HSTRY/2024-12-11: Was <Leader>r and <Leader>R, but I've moved Dubs maps under \d.
+
 if !hasmapto('<Plug>DG_CycleThruLineLengthGuides')
-  map <silent> <unique> <Leader>r
+  nmap <silent> <unique> <Leader>dr
     \ <Plug>DG_CycleThruLineLengthGuides
 endif
 
@@ -679,9 +686,9 @@ noremap <silent> <unique> <script>
   \ <Plug>DG_CycleThruLineLengthGuides
   \ :call <SID>DG_CycleThruLineLengthGuides(0)<CR>
 
-" <Leader>R resets the long-line "enforcement" (three-column rhs vertical stripe).
+" Reset the long-line 'enforcement' (three-column rhs vertical stripe).
 if !hasmapto('<Plug>DG_CycleThruLineLengthReset')
-  map <silent> <unique> <Leader>R
+  nmap <silent> <unique> <Leader>dR
     \ <Plug>DG_CycleThruLineLengthReset
 endif
 
