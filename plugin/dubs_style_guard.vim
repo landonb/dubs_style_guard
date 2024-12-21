@@ -25,10 +25,23 @@
 " breaking, and long-line highlighting using <Leader>dw from:
 "   https://github.com/landonb/dubs_toggle_textwrap
 
-if exists("g:plugin_dubs_style_guard") || &cp
+" -------------------------------------------------------------------
+
+" GUARD: Press <F9> to reload this plugin (or :source it).
+" - Via: https://github.com/landonb/vim-source-reloader#↩️
+
+if expand("%:p") ==# expand("<sfile>:p")
+  unlet g:loaded_dubs_style_guard_plugin
+endif
+
+if exists("g:loaded_dubs_style_guard_plugin") || &cp
+
   finish
 endif
-let g:plugin_dubs_style_guard = 1
+
+let g:loaded_dubs_style_guard_plugin = 1
+
+" -------------------------------------------------------------------
 
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Smart Style Guide Functionality
