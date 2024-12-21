@@ -113,7 +113,7 @@ endif
 
 autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_ApplyStyle()
 
-function! s:CycleThruStyleGuides_ApplyStyle()
+function! s:CycleThruStyleGuides_ApplyStyle() abort
   call s:CycleThruStyleGuides_SetMatch(s:dubs_style_2_char_spaced)
 
   call s:CycleThruStyleGuides_FixMatch()
@@ -136,9 +136,9 @@ noremap <silent> <unique> <script>
   \ :call <SID>CycleThruStyleGuides(0, 1, 0)<CR>
 
 " And finally thunk to the script fcn.
-"  "function <SID>CycleThruStyleGuides()
-"  "  call s:CycleThruStyleGuides()
-"  "endfunction
+"  " function! <SID>CycleThruStyleGuides() abort
+"  "   call s:CycleThruStyleGuides()
+"  " endfunction
 
 " 2012.10.03: I don't use the built-in Ctrl-e often -- in
 " command and select mode, it moves the buffer one line up
@@ -159,7 +159,7 @@ noremap <silent> <unique> <script>
 " ------------------------------------------------------
 
 " Initialize the variable used to track which template is active.
-function s:CycleThruStyleGuides_SetMatch(style_index)
+function! s:CycleThruStyleGuides_SetMatch(style_index) abort
   " NOTE: By checking exists, the style is only applied the very first time
   "       a buffer is opened (so you'll have to reload Vim to have it default
   "       back, as opposed to us not checking exists here but always resetting
@@ -200,7 +200,7 @@ endfunction
 " ------------------------------------------------------
 
 " When a buffer is initially read, we'll try to guess its style.
-function s:CycleThruStyleGuides_FixMatch()
+function! s:CycleThruStyleGuides_FixMatch() abort
   if exists('b:dubs_style_index')
     call <SID>CycleThruStyleGuides(1, 0, 0)
   endif
@@ -222,7 +222,7 @@ noremap <silent> <unique> <script>
   \ <Plug>DG_CycleResetLocking
   \ :call <SID>DG_CycleResetLocking()<CR>
 
-function s:DG_CycleResetLocking()
+function! s:DG_CycleResetLocking() abort
   let b:dubs_style_locked = 0
   call <SID>CycleThruStyleGuides(1, 1, 1)
 endfunction
@@ -239,7 +239,7 @@ endfunction
 " 	      Note: Use |shellescape()| or |::S| with |expand()| or |fnamemodify()|
 " 	      to escape special characters in a command argument.
 "       but I'm not quite sure that the :S is all about, not in docs, didn't work for me.
-function s:ShellEscapedFullPath()
+function! s:ShellEscapedFullPath() abort
   return shellescape(expand('%:p'))
 endfunction
 
@@ -275,7 +275,7 @@ command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eva
 " ------------------------------------------
 " The Style Guide Cycler
 
-function s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
+function! s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset) abort
   if exists('g:style_log')
     unlet g:style_log
   endif
@@ -300,7 +300,7 @@ function s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset)
   endif
 endfunction
 
-function s:CycleThruStyleGuides_(dont_cycle, do_echom)
+function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   DGCTSGEcho 'Setting style_: ' . expand('%:p')
 
   " FIXME: Check that the editorconfig plugin is installed, otherwise skip this.
