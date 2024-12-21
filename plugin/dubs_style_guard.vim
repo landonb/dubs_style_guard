@@ -105,7 +105,7 @@ endif
 " not recognized, such that CycleThruStyleGuides doesn't enforce the style.
 
 "autocmd BufEnter * call CycleThruStyleGuides_SetMatch(
-autocmd BufEnter,BufRead * call CycleThruStyleGuides_SetMatch(
+autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_SetMatch(
                             \ s:dubs_style_2_char_spaced)
 
 " [lb] tried just BufEnter but it doesn't quite work -- e.g.,
@@ -157,7 +157,7 @@ noremap <silent> <unique> <script>
 " ------------------------------------------------------
 
 " Initialize the variable used to track which template is active.
-function CycleThruStyleGuides_SetMatch(style_index)
+function s:CycleThruStyleGuides_SetMatch(style_index)
   " NOTE: By checking exists, the style is only applied the very first time
   "       a buffer is opened (so you'll have to reload Vim to have it default
   "       back, as opposed to us not checking exists here but always resetting
