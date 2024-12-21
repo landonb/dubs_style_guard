@@ -104,18 +104,20 @@ endif
 " an apparent indent scheme already in place or whose file extension is
 " not recognized, such that CycleThruStyleGuides doesn't enforce the style.
 
-"autocmd BufEnter * call CycleThruStyleGuides_SetMatch(
-autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_SetMatch(
-                            \ s:dubs_style_2_char_spaced)
-
 " [lb] tried just BufEnter but it doesn't quite work -- e.g.,
 " when toggling the Quickfix window, if we only catch BufEnter,
 " when checking the buffer to see what it is, not all of its
 " settings are set (so we don't know it's the Quickfix window
 " on BufEnter, but on BufRead -- when it's settings are set --
 " then we can deduce that the buffer is the Quickfix buffer).
-"autocmd BufEnter * call s:CycleThruStyleGuides_FixMatch()
-autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_FixMatch()
+
+autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_ApplyStyle()
+
+function! s:CycleThruStyleGuides_ApplyStyle()
+  call s:CycleThruStyleGuides_SetMatch(s:dubs_style_2_char_spaced)
+
+  call s:CycleThruStyleGuides_FixMatch()
+endfunction
 
 " ------------------------------------------------------
 " Toggle Style Guide Enforcement
