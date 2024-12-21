@@ -94,6 +94,8 @@ if !exists('g:dubs_style_search_depth_tail')
   let g:dubs_style_search_depth_tail = 7
 endif
 
+" -------------------------------------------------------------------
+
 " ------------------------------------------------------
 " Setup global autocmd (as opposed to file-specific ~/.vim/ftplugin/)
 " ------------------------------------------------------
@@ -222,6 +224,8 @@ function s:DG_CycleResetLocking()
   let b:dubs_style_locked = 0
   call <SID>CycleThruStyleGuides(1, 1, 1)
 endfunction
+
+" -------------------------------------------------------------------
 
 " ------------------------------------------------------
 " Choose or Sense a Specific Indent Style or Manually Cycle Through
@@ -657,6 +661,8 @@ function s:CycleThruStyleGuides_(dont_cycle, do_echom)
   "             to the previous tab stop, 'cause I still gotta type spaces
   "             so it's really just more keypresses total.
 endfunction
+
+" -------------------------------------------------------------------
 
 " ------------------------------------------
 " The Line Length Checker Cycler
