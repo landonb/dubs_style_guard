@@ -199,7 +199,7 @@ endfunction
 
 " ------------------------------------------------------
 
-" When a buffer is initially read, we'll try to guess its style.
+" When a buffer is initially read, try to guess its style.
 function! s:CycleThruStyleGuides_FixMatch() abort
   if exists('b:dubs_style_index')
     call <SID>CycleThruStyleGuides(1, 0, 0)
