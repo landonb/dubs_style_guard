@@ -191,10 +191,6 @@ function! s:CycleThruStyleGuides_SetMatch(style_index) abort
   if !exists('b:dubs_style_locked')
     let b:dubs_style_locked = 0
   endif
-
-  if !exists('b:dubs_line_len_style')
-    let b:dubs_line_len_style = 0
-  endif
 endfunction
 
 " ------------------------------------------------------
@@ -207,9 +203,6 @@ function! s:CycleThruStyleGuides_FixMatch() abort
     let l:force_reset = 0
 
     call s:CycleThruStyleGuides(l:dont_cycle, l:do_echom, l:force_reset)
-  endif
-  if exists('b:dubs_line_len_style')
-    call <SID>DG_CycleThruLineLengthGuides(1)
   endif
 endfunction
 
@@ -670,106 +663,25 @@ endfunction
 " ------------------------------------------
 " The Line Length Checker Cycler
 
-let s:dubs_llen_colorcolumn_only = 0
-let s:dubs_llen_autowrap_and_highlight = 1
-let s:dubs_llen_with_highlight = 2
-let s:dubs_llen_all_off = 3
-let s:dubs_llen_count = s:dubs_llen_all_off + 1
+" ONGNG/2024-12-21: I'm convert to autoload/ as I touch things, but I
+" wouldn't expect me to tackle this whole file anytime soon.
+" - Here's our first autoload/ conversion.
 
-" HSTRY/2024-12-11: Was <Leader>r and <Leader>R, but I've moved Dubs maps under \d.
+function! s:EnableLineLengthStyleToogle() abort
+  let l:key_sequence_cycle = '<Leader>dr'
+  let l:key_sequence_reset = '<Leader>dR'
+  let l:default_line_style = 'colorcolumn_only'
 
-if !hasmapto('<Plug>DG_CycleThruLineLengthGuides')
-  nmap <silent> <unique> <Leader>dr
-    \ <Plug>DG_CycleThruLineLengthGuides
-endif
-
-" Map <Plug> to an <SID> function
-noremap <silent> <unique> <script>
-  \ <Plug>DG_CycleThruLineLengthGuides
-  \ :call <SID>DG_CycleThruLineLengthGuides(0)<CR>
-
-" Reset the long-line 'enforcement' (three-column rhs vertical stripe).
-if !hasmapto('<Plug>DG_CycleThruLineLengthReset')
-  nmap <silent> <unique> <Leader>dR
-    \ <Plug>DG_CycleThruLineLengthReset
-endif
-
-noremap <silent> <unique> <script>
-  \ <Plug>DG_CycleThruLineLengthReset
-  \ :call <SID>DG_CycleThruLineLengthReset()<CR>
-
-function s:DG_CycleThruLineLengthReset()
-  let b:dubs_line_len_style = -1
-  call <SID>DG_CycleThruLineLengthGuides(0)
+  call g:embrace#col_col_cycle#Enable(
+    \ l:key_sequence_cycle,
+    \ l:key_sequence_reset,
+    \ l:default_line_style,
+    \ )
 endfunction
 
-function s:DG_CycleThruLineLengthGuides(on_bufenter)
-  if (exists('b:dubs_style_index')
-      \ && (&buflisted == 1)
-      \ && (&buftype != 'quickfix')
-      \ && (&modifiable == 1)
-      \ && (bufname('%') != '-MiniBufExplorer-'))
-    call <SID>DG_CycleThruLineLengthGuides_(a:on_bufenter)
-  else
-    setlocal colorcolumn=
-    match none
-    setlocal textwidth=0
-  endif
-endfunction
+call s:EnableLineLengthStyleToogle()
 
-function s:DG_CycleThruLineLengthGuides_(on_bufenter)
-  if (a:on_bufenter == 0)
-    let b:dubs_line_len_style = b:dubs_line_len_style + 1
-    if (b:dubs_line_len_style >= s:dubs_llen_count)
-      let b:dubs_line_len_style = 0
-    endif
-  endif
-
-  if (b:dubs_line_len_style != s:dubs_llen_all_off)
-    " Highlight the three columns after 'textwidth'.
-    "setlocal colorcolumn=+1,+2,+3
-    " On secondbetter thought, highlight the three columns *before* textwidth.
-    "setlocal colorcolumn=-2,-1,-0
-    " Except we don't always use textwidth, so be specific.
-    " Lightly highlight a few columns after the 80-char width
-    " to encourage frequent and effusive and copious wrapping.
-    "setlocal colorcolumn=80,81,82
-    setlocal colorcolumn=77,78,79
-  else
-    setlocal colorcolumn=
-  endif
-
-  let l:match_description = 'undef'
-  if ((b:dubs_line_len_style == s:dubs_llen_autowrap_and_highlight)
-      \ || (b:dubs_line_len_style == s:dubs_llen_with_highlight))
-    " Highlight long lines.
-    " Too red: match ErrorMsg '\%>79v.\+'
-    match MyErrorMsg '\%>79v.\+'
-    let l:match_description = '>79'
-  else
-  " Disable long-line highlights.
-    match none
-    let l:match_description = 'none'
-  endif
-
-  if (b:dubs_line_len_style == s:dubs_llen_autowrap_and_highlight)
-    " Enforce a 79 character line max -- if the user is typing, forcefully
-    " wrap the line at 80 chars, but if the user copies and pastes, or if
-    " the user appends to an existing long line, then don't care.
-    setlocal textwidth=79
-  else
-    " Don't interfere with the programmer and split long lines as they're
-    " being typed.
-    setlocal textwidth=0
-  endif
-
-  if a:on_bufenter == 0
-    echomsg 'Long-line enforcement: '
-            \ . printf('match=%-6s', l:match_description)
-            \ . printf('tw=%-3s', &textwidth)
-            \ . printf('cc=%-9s', &colorcolumn)
-  endif
-endfunction
+" -------------------------------------------------------------------
 
 " ------------------------------------------
 " EditorConfig enablement

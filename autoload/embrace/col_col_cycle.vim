@@ -1,0 +1,159 @@
+" Author: Landon Bouma <https://tallybark.com/> 
+" Project: https://github.com/landonb/dubs_style_guard#💂
+" License: GPLv3 / Copyright © 2009, 2015-2017, 2024 Landon Bouma.
+" Summary: colorcolumn style toggle (cycler)
+
+" -------------------------------------------------------------------
+
+" ABOUT: Cycle (toggle) through Line Length Style profiles,
+"          which affect highlighting and enforcement rules.
+
+" -------------------------------------------------------------------
+
+" Pick a style, any style.
+let g:style_guard_line_len_style = {
+  \ 'colorcolumn_only': 0,
+  \ 'autowrap_and_highlight': 1,
+  \ 'with_highlight': 2,
+  \ 'all_off': 3,
+  \ }
+
+let s:linestyle_colorcolumn_only = 0
+let s:linestyle_autowrap_and_highlight = 1
+let s:linestyle_with_highlight = 2
+let s:linestyle_all_off = 3
+
+let s:linestyle_count = len(g:style_guard_line_len_style)
+
+" -------------------------------------------------------------------
+
+" When a buffer is initially read, paint its colorcolumn
+" or matching ColorColumn characters.
+function! g:embrace#col_col_cycle#CycleThruLineLenStyles_ApplyStyle(linestyle) abort
+  if !exists('b:style_guard_line_len_style')
+    " Defaults s:linestyle_colorcolumn_only, per CreateMaps.
+    let b:style_guard_line_len_style = a:linestyle
+  endif
+
+  if exists('b:style_guard_line_len_style')
+    let l:on_bufenter = 1
+
+    call <SID>CycleThruLineLengthGuides(l:on_bufenter)
+  endif
+endfunction
+
+" -------------------------------------------------------------------
+
+function! s:CycleThruLineLenStyles_ResetStyle() abort
+  let b:style_guard_line_len_style = s:linestyle_colorcolumn_only
+
+  call <SID>CycleThruLineLengthGuides(0)
+endfunction
+
+function! s:CycleThruLineLengthGuides(on_bufenter) abort
+  if 1
+    \ && exists('b:style_guard_line_len_style')
+    \ && g:embrace#windows2#IsNormalBuffer(bufnr())
+    call s:CycleThruLineLengthGuides_NormalBuffer(a:on_bufenter)
+  else
+    setlocal colorcolumn=
+    match none
+    setlocal textwidth=0
+  endif
+endfunction
+
+function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
+  if (a:on_bufenter == 0)
+    let b:style_guard_line_len_style = b:style_guard_line_len_style + 1
+
+    if (b:style_guard_line_len_style >= s:linestyle_count)
+      let b:style_guard_line_len_style = 0
+    endif
+  endif
+
+  if (b:style_guard_line_len_style != s:linestyle_all_off)
+    " Highlight the three columns after 'textwidth'.
+    "   setlocal colorcolumn=+1,+2,+3
+    " On secondbetter thought, highlight the three columns *before* textwidth.
+    "   setlocal colorcolumn=-2,-1,-0
+    " Except we don't always use textwidth, so be specific.
+    " Lightly highlight a few columns after the 80-char width
+    " to encourage frequent and effusive and copious wrapping.
+    "   setlocal colorcolumn=80,81,82
+    setlocal colorcolumn=77,78,79
+  else
+    setlocal colorcolumn=
+  endif
+
+  let l:match_description = 'undef'
+  if ((b:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
+      \ || (b:style_guard_line_len_style == s:linestyle_with_highlight))
+    " Highlight long lines.
+    " Too red: match ErrorMsg '\%>79v.\+'
+    match MyErrorMsg '\%>79v.\+'
+    let l:match_description = '>79'
+  else
+  " Disable long-line highlights.
+    match none
+    let l:match_description = 'none'
+  endif
+
+  if (b:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
+    " Enforce a 79 character line max -- if the user is typing, forcefully
+    " wrap the line at 80 chars, but if the user copies and pastes, or if
+    " the user appends to an existing long line, then don't care.
+    setlocal textwidth=79
+  else
+    " Don't interfere with the programmer and split long lines as they're
+    " being typed.
+    setlocal textwidth=0
+  endif
+
+  if a:on_bufenter == 0
+    echomsg 'Long-line enforcement: '
+            \ . printf('match=%-6s', l:match_description)
+            \ . printf('tw=%-3s', &textwidth)
+            \ . printf('cc=%-9s', &colorcolumn)
+  endif
+endfunction
+
+" -------------------------------------------------------------------
+
+function! s:CreateAutocmds(default_line_style) abort
+  let l:linestyle = g:style_guard_line_len_style[a:default_line_style]
+
+  execute 'autocmd BufEnter,BufRead * call '
+    \ .. 'g:embrace#col_col_cycle#CycleThruLineLenStyles_ApplyStyle(' .. l:linestyle .. ')'
+endfunction
+
+function! s:CreateMaps(
+  \ key_sequence_cycle = '<Leader>dr',
+  \ key_sequence_reset = '<Leader>dR',
+) abort
+  nnoremap <silent> <expr> <script> <Plug>(style-guide-color-column-cycle)
+    \ <SID>CycleThruLineLengthGuides(0)
+
+  nnoremap <silent> <expr> <script> <Plug>(style-guide-color-column-reset)
+    \ <SID>CycleThruLineLenStyles_ResetStyle()
+
+  execute 'nnoremap <silent> ' .. a:key_sequence_cycle .. ' <Plug>(style-guide-color-column-cycle)'
+
+  execute 'nnoremap <silent> ' .. a:key_sequence_reset .. ' <Plug>(style-guide-color-column-reset)'
+endfunction
+
+" -------------------------------------------------------------------
+
+" DEVEL: After editing file, <F9> to :source (using plugin:)
+"          https://github.com/embrace-vim/vim-source-reloader#↩️
+"        Then run:
+"          call g:embrace#col_col_cycle#Enable()
+
+function! g:embrace#col_col_cycle#Enable(
+  \ key_sequence_cycle = '<Leader>dr',
+  \ key_sequence_reset = '<Leader>dR',
+  \ default_line_style = 'colorcolumn_only',
+  \ ) abort
+  call s:CreateAutocmds(a:default_line_style)
+  call s:CreateMaps(a:key_sequence_cycle, a:key_sequence_reset)
+endfunction
+
