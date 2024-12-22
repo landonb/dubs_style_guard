@@ -202,7 +202,11 @@ endfunction
 " When a buffer is initially read, try to guess its style.
 function! s:CycleThruStyleGuides_FixMatch() abort
   if exists('b:dubs_style_index')
-    call <SID>CycleThruStyleGuides(1, 0, 0)
+    let l:dont_cycle = 1
+    let l:do_echom = 0
+    let l:force_reset = 0
+
+    call s:CycleThruStyleGuides(l:dont_cycle, l:do_echom, l:force_reset)
   endif
   if exists('b:dubs_line_len_style')
     call <SID>DG_CycleThruLineLengthGuides(1)
