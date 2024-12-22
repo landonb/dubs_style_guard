@@ -16,12 +16,14 @@ let g:style_guard_line_len_style = {
   \ 'autowrap_and_highlight': 1,
   \ 'with_highlight': 2,
   \ 'all_off': 3,
+  \ 'highlight_violators': 4,
   \ }
 
 let s:linestyle_colorcolumn_only = 0
 let s:linestyle_autowrap_and_highlight = 1
 let s:linestyle_with_highlight = 2
 let s:linestyle_all_off = 3
+let s:linestyle_highlight_violators = 4
 
 let s:linestyle_count = len(g:style_guard_line_len_style)
 
@@ -34,6 +36,11 @@ function! g:embrace#col_col_cycle#CycleThruLineLenStyles_ApplyStyle(linestyle) a
     " Defaults s:linestyle_colorcolumn_only, per CreateMaps.
     let b:style_guard_line_len_style = a:linestyle
   endif
+
+  if !exists('b:colcol_match_id')
+    let b:colcol_match_id = -1
+  endif
+
 
   if exists('b:style_guard_line_len_style')
     let l:on_bufenter = 1
@@ -71,7 +78,18 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     endif
   endif
 
-  if (b:style_guard_line_len_style != s:linestyle_all_off)
+  if has_key(
+      \ {
+      \   s:linestyle_all_off: 1,
+      \   s:linestyle_highlight_violators: 1,
+      \ },
+      \ b:style_guard_line_len_style
+      \ )
+    setlocal colorcolumn=
+  else
+    " The only enablement for 'colorcolumn_only', also applies to
+    " 'autowrap_and_highlight' and 'with_highlight'.
+
     " Highlight the three columns after 'textwidth'.
     "   setlocal colorcolumn=+1,+2,+3
     " On secondbetter thought, highlight the three columns *before* textwidth.
@@ -81,8 +99,24 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     " to encourage frequent and effusive and copious wrapping.
     "   setlocal colorcolumn=80,81,82
     setlocal colorcolumn=77,78,79
-  else
-    setlocal colorcolumn=
+  endif
+
+  if (b:style_guard_line_len_style == s:linestyle_highlight_violators)
+    let l:priority = 100
+
+    " - NTRST: Highlight individual characters over the line limit,
+    "          vs. having a single column painted top-to-bottom.
+    " - SAVVY: If you use a light ColorColumn highlight so that the
+    "   colorcolumn columns aren't too bright, you might find the
+    "   individual character highlights too dim.
+    "   - MAYBE: We could support another highlight, e.g.,
+    "     ColorColumnViolators. Or not. It's nice that the violator
+    "     highlights aren't that bright, either.
+    let b:colcol_match_id = matchadd('ColorColumn', '\%77v', l:priority)
+  elseif b:colcol_match_id != -1
+    call matchdelete(b:colcol_match_id)
+
+    let b:colcol_match_id = -1
   endif
 
   let l:match_description = 'undef'
@@ -114,6 +148,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
             \ . printf('match=%-6s', l:match_description)
             \ . printf('tw=%-3s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
+            \ . printf('match_id=%-4d', b:colcol_match_id)
   endif
 endfunction
 
