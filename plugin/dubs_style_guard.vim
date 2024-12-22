@@ -314,10 +314,7 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   let l:use_style = 1
   " NO: \ || (&tw == 0)
   if (!exists('b:dubs_style_index')
-      \ || (&buflisted == 0)
-      \ || (&buftype == 'quickfix')
-      \ || (&modifiable == 0)
-      \ || (bufname('%') == '-MiniBufExplorer-')
+      \ || !g:embrace#windows2#IsNormalBuffer(bufnr())
       \ || ((s:editconf_f != '') && (a:dont_cycle != 0)))
     DGCTSGEcho 'Style guide: not use_style'
     let l:use_style = 0
