@@ -101,6 +101,13 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     setlocal colorcolumn=77,78,79
   endif
 
+  if b:colcol_match_id != -1
+    " CALSE: call clearmatches()
+    silent! call matchdelete(b:colcol_match_id)
+
+    let b:colcol_match_id = -1
+  endif
+
   if (b:style_guard_line_len_style == s:linestyle_highlight_violators)
     let l:priority = 100
 
@@ -113,10 +120,6 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     "     ColorColumnViolators. Or not. It's nice that the violator
     "     highlights aren't that bright, either.
     let b:colcol_match_id = matchadd('ColorColumn', '\%77v', l:priority)
-  elseif b:colcol_match_id != -1
-    call matchdelete(b:colcol_match_id)
-
-    let b:colcol_match_id = -1
   endif
 
   let l:match_description = 'undef'
