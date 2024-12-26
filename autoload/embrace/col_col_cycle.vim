@@ -126,8 +126,21 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
   if ((b:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
       \ || (b:style_guard_line_len_style == s:linestyle_with_highlight))
     " Highlight long lines.
-    " Too red: match ErrorMsg '\%>79v.\+'
-    match MyErrorMsg '\%>79v.\+'
+    " - Rather than pick an existing highlight, e.g.:
+    "     match ErrorMsg '\%>79v.\+'  " Too red
+    "   We'll use our own highlight group (which also
+    "   lets the user easily configure it).
+    if !hlexists('ColorColumnViolation')
+      " If you use dubs_after_dark colorscheme, see:
+      "   ~/.vim/pack/landonb/start/dubs_after_dark/colors/after-dark.vim
+      " https://github.com/landonb/dubs_after_dark#🌃
+      " USAGE: Define from your config to customize.
+      " - This highlights paints the first character of a long line that breaches the barrier.
+      " - THOTS: DarkBlue is subtle against a black bg. Or DarkMagenta or DarkGreen.
+      "   - But DarkBlue seems noticeable without being grabby about it.
+      highlight ColorColumnViolation term=standout ctermbg=8 guibg=DarkBlue
+    endif
+    match ColorColumnViolation '\%>79v.\+'
     let l:match_description = '>79'
   else
   " Disable long-line highlights.
