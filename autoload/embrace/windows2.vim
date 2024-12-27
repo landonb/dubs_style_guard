@@ -13,6 +13,12 @@
 
 function! g:embrace#windows2#IsNormalBuffer(bufnr) abort
   let l:bufnr = bufnr(a:bufnr)
+
+  if l:bufnr == -1
+
+    return 0
+  endif
+
   let l:ftype = getbufvar(l:bufnr, "&filetype")
 
   if 0
