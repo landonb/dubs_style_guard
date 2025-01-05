@@ -43,6 +43,10 @@ function! s:PrepareDefaults(linestyle = -1) abort
     let w:colcol_match_id_violatation = -1
   endif
 
+  if !exists('w:colcol_match_id_violators')
+    let w:colcol_match_id_violators = -1
+  endif
+
   " Highlight long lines.
   " - Rather than pick an existing highlight, e.g.:
   "     match ErrorMsg '\%>79v.\+'  " Too red
@@ -148,17 +152,24 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     let w:colcol_match_id_violatation = -1
   endif
 
+  let l:prev_match_id_violators = w:colcol_match_id_violators
+
   let l:match_description = 'undef'
   if 0
       \ || (w:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
       \ || (w:style_guard_line_len_style == s:linestyle_with_highlight)
 
-    match ColorColumnViolation '\%>79v.\+'
+    if w:colcol_match_id_violators == -1
+      let w:colcol_match_id_violators = matchadd(
+        \ 'ColorColumnViolation', '\%>79v.\+', l:match_priority
+        \ )
+    endif
     let l:match_description = '>79'
   else
-    " Disable long-line highlights.
     " CRUMB: s:linestyle_all_off
-    match none
+    silent! call matchdelete(w:colcol_match_id_violators)
+
+    let w:colcol_match_id_violators = -1
     let l:match_description = 'none'
   endif
 
@@ -181,6 +192,8 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
             \ . printf('cc=%-9s', &colorcolumn)
             \ . printf('match_id_one=%-5d', w:colcol_match_id_violatation)
             \ . printf('prev_id_one=%-5d', l:prev_match_id_violation)
+            \ . printf('match_id_all=%-5d', w:colcol_match_id_violators)
+            \ . printf('prev_id_all=%-5d', l:prev_match_id_violators)
   endif
 endfunction
 
