@@ -102,7 +102,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
   endif
 
   if w:colcol_match_id != -1
-    " CALSE: call clearmatches()
+    " CALSO: call clearmatches()
     silent! call matchdelete(w:colcol_match_id)
 
     let w:colcol_match_id = -1
@@ -143,7 +143,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     match ColorColumnViolation '\%>79v.\+'
     let l:match_description = '>79'
   else
-  " Disable long-line highlights.
+    " Disable long-line highlights.
     match none
     let l:match_description = 'none'
   endif
