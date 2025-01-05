@@ -36,8 +36,8 @@ function! s:PrepareDefaults(linestyle = s:linestyle_default) abort
     let w:style_guard_line_len_style = a:linestyle
   endif
 
-  if !exists('w:colcol_match_id')
-    let w:colcol_match_id = -1
+  if !exists('w:colcol_match_ids')
+    let w:colcol_match_ids = []
   endif
 
   " Highlight long lines.
@@ -121,13 +121,15 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     setlocal colorcolumn=77,78,79
   endif
 
-  let l:prev_match_id = w:colcol_match_id
+  let l:prev_match_ids = copy(w:colcol_match_ids)
 
-  if w:colcol_match_id != -1
-    " CALSO: call clearmatches()
-    silent! call matchdelete(w:colcol_match_id)
+  if !empty(w:colcol_match_ids)
+    " CALSO: call clearmatches(winnr())
+    for l:match_id in w:colcol_match_ids
+      silent! call matchdelete(l:match_id)
+    endfor
 
-    let w:colcol_match_id = -1
+    let w:colcol_match_ids = []
   endif
 
   if w:style_guard_line_len_style == s:linestyle_highlight_violators
@@ -141,7 +143,8 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     "   - MAYBE: We could support another highlight, e.g.,
     "     ColorColumnViolators. Or not. It's nice that the violator
     "     highlights aren't that bright, either.
-    let w:colcol_match_id = matchadd('ColorColumn', '\%77v', l:priority)
+    let l:match_id = matchadd('ColorColumn', '\%77v', l:priority)
+    call add(w:colcol_match_ids, l:match_id)
   endif
 
   let l:match_description = 'undef'
@@ -175,8 +178,8 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
             \ . printf('match=%-6s', l:match_description)
             \ . printf('tw=%-3s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
-            \ . printf('match_id=%-4d', w:colcol_match_id)
-            \ . printf('prev_id=%-4d', l:prev_match_id)
+            \ . printf('match_ids=%s', w:colcol_match_ids)
+            \ . printf('prev_ids=%s', l:prev_match_ids)
   endif
 endfunction
 
