@@ -78,7 +78,7 @@ endfunction
 " -------------------------------------------------------------------
 
 function! s:CycleThruLineLenStyles_ResetStyle() abort
-  call s:PrepareDefaults()
+  call clearmatches(winnr())
 
   let w:style_guard_line_len_style = w:linestyle_default
 
