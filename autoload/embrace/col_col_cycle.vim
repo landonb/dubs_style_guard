@@ -82,14 +82,17 @@ function! s:CycleThruLineLenStyles_ResetStyle() abort
 
   let w:style_guard_line_len_style = w:linestyle_default
 
-  call <SID>CycleThruLineLengthGuides(0)
+  let l:on_bufenter = 0
+  let l:keep_style = 1
+
+  call s:CycleThruLineLengthGuides(l:on_bufenter, l:keep_style)
 endfunction
 
-function! s:CycleThruLineLengthGuides(on_bufenter) abort
+function! s:CycleThruLineLengthGuides(on_bufenter = 0, keep_style = 0) abort
   if 1
     \ && exists('w:style_guard_line_len_style')
     \ && g:embrace#windows2#IsNormalBuffer(bufnr())
-    call s:CycleThruLineLengthGuides_NormalBuffer(a:on_bufenter)
+    call s:CycleThruLineLengthGuides_NormalBuffer(a:on_bufenter, a:keep_style)
   else
     setlocal colorcolumn=
     match none
@@ -97,8 +100,8 @@ function! s:CycleThruLineLengthGuides(on_bufenter) abort
   endif
 endfunction
 
-function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
-  if a:on_bufenter == 0
+function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter = 0, keep_style = 0) abort
+  if !a:on_bufenter && !a:keep_style
     let w:style_guard_line_len_style = w:style_guard_line_len_style + 1
 
     if w:style_guard_line_len_style >= s:linestyle_count
@@ -185,8 +188,9 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     setlocal textwidth=0
   endif
 
-  if a:on_bufenter == 0
+  if !a:on_bufenter || a:keep_style
     echomsg 'Long-line enforcement: '
+            \ . printf('style_id=%-2d', w:style_guard_line_len_style)
             \ . printf('match=%-6s', l:match_description)
             \ . printf('tw=%-3s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
