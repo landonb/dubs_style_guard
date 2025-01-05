@@ -86,6 +86,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
       \ },
       \ w:style_guard_line_len_style
       \ )
+    " CRUMB: s:linestyle_all_off
     setlocal colorcolumn=
   else
     " The only enablement for 'colorcolumn_only', also applies to
@@ -147,6 +148,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     let l:match_description = '>79'
   else
     " Disable long-line highlights.
+    " CRUMB: s:linestyle_all_off
     match none
     let l:match_description = 'none'
   endif
@@ -159,6 +161,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
   else
     " Don't interfere with the programmer and split long lines as they're
     " being typed.
+    " CRUMB: s:linestyle_all_off
     setlocal textwidth=0
   endif
 
