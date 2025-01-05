@@ -32,17 +32,17 @@ let s:linestyle_count = len(g:style_guard_line_len_style)
 " When a buffer is initially read, paint its colorcolumn
 " or matching ColorColumn characters.
 function! g:embrace#col_col_cycle#CycleThruLineLenStyles_ApplyStyle(linestyle) abort
-  if !exists('b:style_guard_line_len_style')
+  if !exists('w:style_guard_line_len_style')
     " Defaults s:linestyle_colorcolumn_only, per CreateMaps.
-    let b:style_guard_line_len_style = a:linestyle
+    let w:style_guard_line_len_style = a:linestyle
   endif
 
-  if !exists('b:colcol_match_id')
-    let b:colcol_match_id = -1
+  if !exists('w:colcol_match_id')
+    let w:colcol_match_id = -1
   endif
 
 
-  if exists('b:style_guard_line_len_style')
+  if exists('w:style_guard_line_len_style')
     let l:on_bufenter = 1
 
     call <SID>CycleThruLineLengthGuides(l:on_bufenter)
@@ -52,14 +52,14 @@ endfunction
 " -------------------------------------------------------------------
 
 function! s:CycleThruLineLenStyles_ResetStyle() abort
-  let b:style_guard_line_len_style = s:linestyle_colorcolumn_only
+  let w:style_guard_line_len_style = s:linestyle_colorcolumn_only
 
   call <SID>CycleThruLineLengthGuides(0)
 endfunction
 
 function! s:CycleThruLineLengthGuides(on_bufenter) abort
   if 1
-    \ && exists('b:style_guard_line_len_style')
+    \ && exists('w:style_guard_line_len_style')
     \ && g:embrace#windows2#IsNormalBuffer(bufnr())
     call s:CycleThruLineLengthGuides_NormalBuffer(a:on_bufenter)
   else
@@ -71,10 +71,10 @@ endfunction
 
 function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
   if (a:on_bufenter == 0)
-    let b:style_guard_line_len_style = b:style_guard_line_len_style + 1
+    let w:style_guard_line_len_style = w:style_guard_line_len_style + 1
 
-    if (b:style_guard_line_len_style >= s:linestyle_count)
-      let b:style_guard_line_len_style = 0
+    if (w:style_guard_line_len_style >= s:linestyle_count)
+      let w:style_guard_line_len_style = 0
     endif
   endif
 
@@ -83,7 +83,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
       \   s:linestyle_all_off: 1,
       \   s:linestyle_highlight_violators: 1,
       \ },
-      \ b:style_guard_line_len_style
+      \ w:style_guard_line_len_style
       \ )
     setlocal colorcolumn=
   else
@@ -101,14 +101,14 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     setlocal colorcolumn=77,78,79
   endif
 
-  if b:colcol_match_id != -1
+  if w:colcol_match_id != -1
     " CALSE: call clearmatches()
-    silent! call matchdelete(b:colcol_match_id)
+    silent! call matchdelete(w:colcol_match_id)
 
-    let b:colcol_match_id = -1
+    let w:colcol_match_id = -1
   endif
 
-  if (b:style_guard_line_len_style == s:linestyle_highlight_violators)
+  if (w:style_guard_line_len_style == s:linestyle_highlight_violators)
     let l:priority = 100
 
     " - NTRST: Highlight individual characters over the line limit,
@@ -119,12 +119,12 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     "   - MAYBE: We could support another highlight, e.g.,
     "     ColorColumnViolators. Or not. It's nice that the violator
     "     highlights aren't that bright, either.
-    let b:colcol_match_id = matchadd('ColorColumn', '\%77v', l:priority)
+    let w:colcol_match_id = matchadd('ColorColumn', '\%77v', l:priority)
   endif
 
   let l:match_description = 'undef'
-  if ((b:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
-      \ || (b:style_guard_line_len_style == s:linestyle_with_highlight))
+  if ((w:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
+      \ || (w:style_guard_line_len_style == s:linestyle_with_highlight))
     " Highlight long lines.
     " - Rather than pick an existing highlight, e.g.:
     "     match ErrorMsg '\%>79v.\+'  " Too red
@@ -148,7 +148,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     let l:match_description = 'none'
   endif
 
-  if (b:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
+  if (w:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
     " Enforce a 79 character line max -- if the user is typing, forcefully
     " wrap the line at 80 chars, but if the user copies and pastes, or if
     " the user appends to an existing long line, then don't care.
@@ -164,7 +164,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
             \ . printf('match=%-6s', l:match_description)
             \ . printf('tw=%-3s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
-            \ . printf('match_id=%-4d', b:colcol_match_id)
+            \ . printf('match_id=%-4d', w:colcol_match_id)
   endif
 endfunction
 
