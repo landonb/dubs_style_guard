@@ -72,7 +72,7 @@ function! g:embrace#col_col_cycle#CycleThruLineLenStyles_ApplyStyle(linestyle) a
   call s:PrepareDefaults(a:linestyle)
 
   let l:on_bufenter = 1
-  call <SID>CycleThruLineLengthGuides(l:on_bufenter)
+  call s:CycleThruLineLengthGuides(l:on_bufenter)
 endfunction
 
 " -------------------------------------------------------------------
