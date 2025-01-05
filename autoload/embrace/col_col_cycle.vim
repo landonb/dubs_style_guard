@@ -27,13 +27,16 @@ let s:linestyle_highlight_violators = 4
 
 let s:linestyle_count = len(g:style_guard_line_len_style)
 
-let s:linestyle_default = s:linestyle_colorcolumn_only
-
 " -------------------------------------------------------------------
 
-function! s:PrepareDefaults(linestyle = s:linestyle_default) abort
+function! s:PrepareDefaults(linestyle = -1) abort
+  let w:linestyle_default = get(
+    \ g:, 'colorcolumn_linestyle_default', s:linestyle_colorcolumn_only
+    \ )
+
   if !exists('w:style_guard_line_len_style')
-    let w:style_guard_line_len_style = a:linestyle
+    let w:style_guard_line_len_style =
+      \ (a:linestyle != -1) ? a:linestyle : w:linestyle_default
   endif
 
   if !exists('w:colcol_match_ids')
@@ -71,7 +74,9 @@ endfunction
 " -------------------------------------------------------------------
 
 function! s:CycleThruLineLenStyles_ResetStyle() abort
-  let w:style_guard_line_len_style = s:linestyle_default
+  call s:PrepareDefaults()
+
+  let w:style_guard_line_len_style = w:linestyle_default
 
   call <SID>CycleThruLineLengthGuides(0)
 endfunction
