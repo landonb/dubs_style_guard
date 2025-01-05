@@ -34,6 +34,10 @@ function! s:PrepareDefaults(linestyle = -1) abort
     \ g:, 'colorcolumn_linestyle_default', s:linestyle_colorcolumn_only
     \ )
 
+  let w:linestyle_default_special = get(
+    \ g:, 'colorcolumn_linestyle_default_special', s:linestyle_all_off
+    \ )
+
   if !exists('w:style_guard_line_len_style')
     let w:style_guard_line_len_style =
       \ (a:linestyle != -1) ? a:linestyle : w:linestyle_default
@@ -89,15 +93,19 @@ function! s:CycleThruLineLenStyles_ResetStyle() abort
 endfunction
 
 function! s:CycleThruLineLengthGuides(on_bufenter = 0, keep_style = 0) abort
-  if 1
-    \ && exists('w:style_guard_line_len_style')
-    \ && g:embrace#windows2#IsNormalBuffer(bufnr())
-    call s:CycleThruLineLengthGuides_NormalBuffer(a:on_bufenter, a:keep_style)
-  else
-    setlocal colorcolumn=
-    match none
-    setlocal textwidth=0
+  call s:PrepareDefaults()
+
+  " Note we still act on special buffers, because the
+  " match IDs are window-bound.
+  let l:is_normal = g:embrace#windows2#IsNormalBuffer(bufnr())
+
+  " Let the user opt-in to cc styling in a special buffer,
+  " but default to disabled (or what special default is).
+  if !l:is_normal && a:on_bufenter
+    let w:style_guard_line_len_style = w:linestyle_default_special
   endif
+
+  call s:CycleThruLineLengthGuides_NormalBuffer(a:on_bufenter, a:keep_style)
 endfunction
 
 function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter = 0, keep_style = 0) abort
