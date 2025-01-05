@@ -127,8 +127,9 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
   endif
 
   let l:match_description = 'undef'
-  if ((w:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
-      \ || (w:style_guard_line_len_style == s:linestyle_with_highlight))
+  if 0
+      \ || (w:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
+      \ || (w:style_guard_line_len_style == s:linestyle_with_highlight)
     " Highlight long lines.
     " - Rather than pick an existing highlight, e.g.:
     "     match ErrorMsg '\%>79v.\+'  " Too red
@@ -144,6 +145,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
       "   - But DarkBlue seems noticeable without being grabby about it.
       highlight ColorColumnViolation term=standout ctermbg=8 guibg=DarkBlue
     endif
+
     match ColorColumnViolation '\%>79v.\+'
     let l:match_description = '>79'
   else
