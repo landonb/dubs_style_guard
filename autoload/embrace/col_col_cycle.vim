@@ -39,8 +39,8 @@ function! s:PrepareDefaults(linestyle = -1) abort
       \ (a:linestyle != -1) ? a:linestyle : w:linestyle_default
   endif
 
-  if !exists('w:colcol_match_ids')
-    let w:colcol_match_ids = []
+  if !exists('w:colcol_match_id_violatation')
+    let w:colcol_match_id_violatation = -1
   endif
 
   " Highlight long lines.
@@ -126,20 +126,11 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     setlocal colorcolumn=77,78,79
   endif
 
-  let l:prev_match_ids = copy(w:colcol_match_ids)
+  let l:match_priority = 100
 
-  if !empty(w:colcol_match_ids)
-    " CALSO: call clearmatches(winnr())
-    for l:match_id in w:colcol_match_ids
-      silent! call matchdelete(l:match_id)
-    endfor
-
-    let w:colcol_match_ids = []
-  endif
+  let l:prev_match_id_violation = w:colcol_match_id_violatation
 
   if w:style_guard_line_len_style == s:linestyle_highlight_violators
-    let l:priority = 100
-
     " - NTRST: Highlight individual characters over the line limit,
     "          vs. having a single column painted top-to-bottom.
     " - SAVVY: If you use a light ColorColumn highlight so that the
@@ -148,8 +139,13 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     "   - MAYBE: We could support another highlight, e.g.,
     "     ColorColumnViolators. Or not. It's nice that the violator
     "     highlights aren't that bright, either.
-    let l:match_id = matchadd('ColorColumn', '\%77v', l:priority)
-    call add(w:colcol_match_ids, l:match_id)
+    let w:colcol_match_id_violatation = matchadd(
+      \ 'ColorColumn', '\%77v', l:match_priority
+      \ )
+  else
+    silent! call matchdelete(w:colcol_match_id_violatation)
+
+    let w:colcol_match_id_violatation = -1
   endif
 
   let l:match_description = 'undef'
@@ -183,8 +179,8 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
             \ . printf('match=%-6s', l:match_description)
             \ . printf('tw=%-3s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
-            \ . printf('match_ids=%s', w:colcol_match_ids)
-            \ . printf('prev_ids=%s', l:prev_match_ids)
+            \ . printf('match_id_one=%-5d', w:colcol_match_id_violatation)
+            \ . printf('prev_id_one=%-5d', l:prev_match_id_violation)
   endif
 endfunction
 
