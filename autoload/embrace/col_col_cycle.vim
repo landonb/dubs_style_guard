@@ -27,13 +27,14 @@ let s:linestyle_highlight_violators = 4
 
 let s:linestyle_count = len(g:style_guard_line_len_style)
 
+let s:linestyle_default = s:linestyle_colorcolumn_only
+
 " -------------------------------------------------------------------
 
 " When a buffer is initially read, paint its colorcolumn
 " or matching ColorColumn characters.
 function! g:embrace#col_col_cycle#CycleThruLineLenStyles_ApplyStyle(linestyle) abort
   if !exists('w:style_guard_line_len_style')
-    " Defaults s:linestyle_colorcolumn_only, per CreateMaps.
     let w:style_guard_line_len_style = a:linestyle
   endif
 
@@ -52,7 +53,7 @@ endfunction
 " -------------------------------------------------------------------
 
 function! s:CycleThruLineLenStyles_ResetStyle() abort
-  let w:style_guard_line_len_style = s:linestyle_colorcolumn_only
+  let w:style_guard_line_len_style = s:linestyle_default
 
   call <SID>CycleThruLineLengthGuides(0)
 endfunction
