@@ -71,10 +71,10 @@ function! s:CycleThruLineLengthGuides(on_bufenter) abort
 endfunction
 
 function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
-  if (a:on_bufenter == 0)
+  if a:on_bufenter == 0
     let w:style_guard_line_len_style = w:style_guard_line_len_style + 1
 
-    if (w:style_guard_line_len_style >= s:linestyle_count)
+    if w:style_guard_line_len_style >= s:linestyle_count
       let w:style_guard_line_len_style = 0
     endif
   endif
@@ -109,7 +109,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     let w:colcol_match_id = -1
   endif
 
-  if (w:style_guard_line_len_style == s:linestyle_highlight_violators)
+  if w:style_guard_line_len_style == s:linestyle_highlight_violators
     let l:priority = 100
 
     " - NTRST: Highlight individual characters over the line limit,
@@ -149,7 +149,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     let l:match_description = 'none'
   endif
 
-  if (w:style_guard_line_len_style == s:linestyle_autowrap_and_highlight)
+  if w:style_guard_line_len_style == s:linestyle_autowrap_and_highlight
     " Enforce a 79 character line max -- if the user is typing, forcefully
     " wrap the line at 80 chars, but if the user copies and pastes, or if
     " the user appends to an existing long line, then don't care.
