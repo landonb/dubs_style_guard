@@ -102,6 +102,8 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
     setlocal colorcolumn=77,78,79
   endif
 
+  let l:prev_match_id = w:colcol_match_id
+
   if w:colcol_match_id != -1
     " CALSO: call clearmatches()
     silent! call matchdelete(w:colcol_match_id)
@@ -166,6 +168,7 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter) abort
             \ . printf('tw=%-3s', &textwidth)
             \ . printf('cc=%-9s', &colorcolumn)
             \ . printf('match_id=%-4d', w:colcol_match_id)
+            \ . printf('prev_id=%-4d', l:prev_match_id)
   endif
 endfunction
 
