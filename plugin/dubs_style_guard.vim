@@ -67,8 +67,8 @@ let s:dubs_style_3_char_tabbed = 6
 " We don't actually cycle through all of the styles above.
 " We only cycle over a few of them, depending on our taste.
 " Feel free to change this count to cycle over more styles.
-" Too many: let s:dubs_styles_count = s:dubs_style_3_char_tabbed + 1
-"let s:dubs_styles_count = s:dubs_style_4_char_tabbed + 1
+" - Too many:
+"   let s:dubs_styles_count = s:dubs_style_3_char_tabbed + 1
 let s:dubs_styles_count = s:dubs_style_4_char_spaced + 1
 
 " User interface.
@@ -243,14 +243,14 @@ endfunction
 " ------------------------------------------
 " "Echo" to variable
 
+" SAVVY: Vim Command name cannot be underscored, e.g., DG_CTSG_Echo is no good.
 " https://stackoverflow.com/questions/8629452/is-it-possible-to-clear-message-history-in-gvim
-"command! -nargs=1 -bar Echo :let g:messages=get(g:, 'messages', [])+[<q-args>]
+"  command! -nargs=1 -bar Echo :let g:messages=get(g:, 'messages', [])+[<q-args>]
 " This gives errors when Echo is run:
-"command! -nargs=1 -bar Echo :let g:messages=get(g:, 'messages', [])+[eval(<args>)] | echom <args>
+"  command! -nargs=1 -bar Echo :let g:messages=get(g:, 'messages', [])+[eval(<args>)] | echom <args>
 " But using q-args works.
 " FIXME: Correct stack overflow answer.
-"command! -nargs=1 -bar Echo :let g:messages=get(g:, 'messages', [])+[eval(<q-args>)] | echom <args>
-" Strange: Command name cannot be understored, e.g., DG_CTSG_Echo is no good.
+"  command! -nargs=1 -bar Echo :let g:messages=get(g:, 'messages', [])+[eval(<q-args>)] | echom <args>
 " But without the echom:
 command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eval(<q-args>)]
 " ===============
