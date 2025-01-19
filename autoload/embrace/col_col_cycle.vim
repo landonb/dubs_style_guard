@@ -219,9 +219,9 @@ function! s:CreateAutocmds(default_line_style) abort
 endfunction
 
 function! s:CreateMaps(
-  \ key_sequence_cycle = '<Leader>dr',
-  \ key_sequence_reset = '<Leader>dR',
-  \ ) abort
+\ key_sequence_cycle = '<Leader>dr',
+\ key_sequence_reset = '<Leader>dR',
+\ ) abort
   nnoremap <silent> <expr> <script> <Plug>(style-guide-color-column-cycle)
     \ <SID>CycleThruLineLengthGuides(0)
 
@@ -241,10 +241,10 @@ endfunction
 "          call g:embrace#col_col_cycle#Enable()
 
 function! g:embrace#col_col_cycle#Enable(
-  \ key_sequence_cycle = '<Leader>dr',
-  \ key_sequence_reset = '<Leader>dR',
-  \ default_line_style = 'colorcolumn_only',
-  \ ) abort
+\ key_sequence_cycle = '<Leader>dr',
+\ key_sequence_reset = '<Leader>dR',
+\ default_line_style = 'colorcolumn_only',
+\ ) abort
   call s:CreateAutocmds(a:default_line_style)
   call s:CreateMaps(a:key_sequence_cycle, a:key_sequence_reset)
 endfunction
