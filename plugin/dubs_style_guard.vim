@@ -215,11 +215,11 @@ endfunction
 " Reset the style (possibly by reading the file for its modeline).
 " - HSTRY/2024-12-11: Was <Leader>E, but I've moved Dubs maps under \d.
 if !hasmapto('<Plug>DG_CycleResetLocking')
-  nmap <silent> <unique> <Leader>dE
+  nnoremap <silent> <Leader>dE
     \ <Plug>DG_CycleResetLocking
 endif
 
-noremap <silent> <unique> <script>
+nnoremap <silent> <script>
   \ <Plug>DG_CycleResetLocking
   \ :call <SID>DG_CycleResetLocking()<CR>
 
