@@ -169,8 +169,8 @@ Style-enforcers:
 
       - It'll tries to sleuth the style, if there's no modeline;
 
-      - And the ``\e`` and ``\E`` macros make it easy to cycle through
-        different styles and to reset the style.
+      - The ``\de`` and ``\dE`` bindings make it easy to cycle through
+        different common styles, and to reset the style.
 
 Whitespace-detectors:
 
