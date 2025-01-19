@@ -111,7 +111,11 @@ endif
 " on BufEnter, but on BufRead -- when it's settings are set --
 " then we can deduce that the buffer is the Quickfix buffer).
 
-autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_ApplyStyle()
+augroup dubs_style_guard_style_guides
+  au!
+  
+  autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_ApplyStyle()
+augroup END
 
 function! s:CycleThruStyleGuides_ApplyStyle() abort
   call s:CycleThruStyleGuides_SetMatch(s:dubs_style_2_char_spaced)
