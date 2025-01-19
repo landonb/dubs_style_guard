@@ -221,7 +221,7 @@ endfunction
 function! s:CreateMaps(
   \ key_sequence_cycle = '<Leader>dr',
   \ key_sequence_reset = '<Leader>dR',
-) abort
+  \ ) abort
   nnoremap <silent> <expr> <script> <Plug>(style-guide-color-column-cycle)
     \ <SID>CycleThruLineLengthGuides(0)
 
