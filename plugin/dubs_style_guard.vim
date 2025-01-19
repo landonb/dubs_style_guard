@@ -258,6 +258,7 @@ command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eva
 " ===============
 "   echo g:style_log
 "   TabMessage echo g:style_log
+"   for aline in g:style_log | echom " " | echom aline | endfor
 " ===============
 " CPYST: To clear the log:
 " ===============
