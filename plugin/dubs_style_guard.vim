@@ -217,6 +217,8 @@ endfunction
 if !hasmapto('<Plug>DG_CycleResetLocking')
   nnoremap <silent> <Leader>dE
     \ <Plug>DG_CycleResetLocking
+  inoremap <silent> <Leader>dE
+    \ <Plug>DG_CycleResetLocking
 endif
 
 nnoremap <silent> <script>
