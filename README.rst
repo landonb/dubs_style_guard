@@ -120,14 +120,6 @@ does not remember why this plugin duplicates functionality that Vim
 implements. Perhaps, over a decade ago when I originally wrote this
 plugin, Vim didn't read the modeline? I don't recall.)
 
-This plugin also searches up the directory hierarchy for a special
-modeline file, ``.dubs_style.vim``, that can contain a list of
-filetypes and modelines. So you can easily define the style for
-different projects and for different filetypes within projects.
-
-- See the example ``.dubs_style.vim`` modeline file in
-  the same directory as this README.
-
 Note, however, that there are better style rule solutions.
 
 - The author prefers the *EditorConfig* plugin, described next, to
@@ -144,8 +136,8 @@ Style-enforcers:
 - `EditorConfig <http://editorconfig.org/>`__
   is a robust and universal style enforcer.
 
-  - It uses an ``.editorconfig`` file similar
-    (but more expressive) than ``.dubs_style.vim``.
+  - It uses an ``.editorconfig`` file, generally
+    located at the root of a project.
 
   - There are plugins for most IDEs, in addition to Vim.
 
@@ -156,16 +148,12 @@ Style-enforcers:
 
   - I recommend using
     `EditorConfig <http://editorconfig.org/>`__
-    if you have a large team and not everyone
-    has grown into Vim yet.
+    in addition to this plugin (or similar)
+    to look for modelines in each file, and
+    to make it easy to cycle through different
+    tab and width profiles.
 
-    But the ``.dubs_style.vim`` solution is nice because
-    it uses the standard modeline syntax -- whereas *EditorConfig*
-    uses its own INI-style format -- so if you're already a Vimmer,
-    it's quick 'n easy to make a ``.dubs_style.vim`` file and stuff
-    a modeline inside.
-
-    - Also, the ``dubs_style_guard`` plugin has a few other features:
+    - This plugin has a few other features:
 
       - It'll tries to sleuth the style, if there's no modeline;
 

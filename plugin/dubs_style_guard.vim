@@ -474,46 +474,9 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
         DGCTSGEcho 'File is not readable: ' . expand('%:p')
     endif
 
-    " Look for a dubs modeline file.
-    " '.;' searches from the directory of the current
-    "      file upwards until it finds the file.
-    let s:modeline_f = findfile('.dubs_style.vim', '.;')
-    let l:bash_cmd2 = ''
-    let l:modeline_project = ''
-    if (s:modeline_f != '')
-      if (expand('%:e') != '')
-        " expand('%:e') is the current file's extension, e.g., 'cpp'.
-        let l:modeproj_grep =
-          \ l:modeline_grep_prefix . expand('%:e') . l:modeline_grep_postfix
-        let l:modeproj_seds =
-          \ l:modeline_seds_prefix . expand('%:e') . l:modeline_seds_postfix
-        let l:bash_cmd2 = l:modeproj_grep . s:modeline_f . l:modeproj_seds
-        DGCTSGEcho '1st l:bash_cmd2: ' . l:bash_cmd2
-        let l:modeline_project = system(l:bash_cmd2)
-      endif
-      if l:modeline_project != ''
-        DGCTSGEcho 'Found exact modeline project file match: '
-          \ . l:modeline_project
-      else
-        let l:modeproj_grep =
-          \ l:modeline_grep_prefix . '\*' . l:modeline_grep_postfix
-        let l:modeproj_seds =
-          \ l:modeline_seds_prefix . '\*' . l:modeline_seds_postfix
-        let l:bash_cmd2 = l:modeproj_grep . s:modeline_f . l:modeproj_seds
-        DGCTSGEcho '2nd l:bash_cmd2: ' . l:bash_cmd2
-        let l:modeline_project = system(l:bash_cmd2)
-        if l:modeline_project != ''
-          DGCTSGEcho 'Found default modeline project file match: '
-            \ . l:modeline_project
-        endif
-      endif
-    endif
-
     let l:found_modeline = ''
     if l:modeline_embedded != ''
       let l:found_modeline = l:modeline_embedded
-    elseif l:modeline_project != ''
-      let l:found_modeline = l:modeline_project
     endif
 
     if l:found_modeline != ''

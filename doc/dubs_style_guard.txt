@@ -47,16 +47,6 @@ Modelines are common to Vim, but they're generally only
 read for help files. Dubs Vim always looks for them in
 the first five or last five lines of a file.
 
-Dubs Vim also searches up the directory hierarchy for a
-special modeline file, `.dubs_style.vim`, that can
-contain a list of filetypes and modelines, so you can
-easily define the style for different projects and for
-different filetypes within projects.
-
-For more help on the special modeline file, look at the
-file of the same name in the source, in the same directory
-as this readme.
-
 ==============================================================================
 3. Similar Plugins			*dubs-styleg-similar*
 
@@ -65,8 +55,8 @@ Style-enforcers:
 - EditorConfig <http://editorconfig.org/>
   is a robust and universal style enforcer.
 
-  - It uses an `.editorconfig` file similar
-    (but more expressive) than `.dubs_style.vim`.
+  - It uses an `.editorconfig` file, generally
+    located at the root of a project.
 
   - There are plugins for most IDEs, in addition to Vim.
 
@@ -75,12 +65,12 @@ Style-enforcers:
       <https://github.com/editorconfig/editorconfig-vim>
       to, e.g., `~/.vim/pack/editorconfig/start/editorconfig-vim`
 
-  - I highly recommend using
+  - I recommend using
     EditorConfig <http://editorconfig.org/>
-    to make sure everyone on your team uses
-    the same style when working on project files;
-    the `.dubs_style.vim` solution is okay for
-    personal use but not as great as EditorConfig.
+    in addition to this plugin (or similar)
+    to look for modelines in each file, and
+    to make it easy to cycle through different
+    tab and width profiles.
 
 Whitespace-detectors:
 
