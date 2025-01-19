@@ -114,7 +114,7 @@ endif
 augroup dubs_style_guard_style_guides
   au!
   
-  autocmd BufEnter,BufRead * call s:CycleThruStyleGuides_ApplyStyle()
+  autocmd BufRead,BufWritePost * call s:CycleThruStyleGuides_ApplyStyle()
 augroup END
 
 function! s:CycleThruStyleGuides_ApplyStyle() abort
