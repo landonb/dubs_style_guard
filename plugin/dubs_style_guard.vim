@@ -276,18 +276,22 @@ command! -nargs=1 -bar DGCTSGEcho :let g:style_log=get(g:, 'style_log', [])+[eva
 "       Echo "Whatever"     E471: Argument required
 "       Echo 'Whatever'     Whatever
 
+let g:style_cnt = 0
+
 " ------------------------------------------
 " The Style Guide Cycler
 
 function! s:CycleThruStyleGuides(dont_cycle, do_echom, force_reset) abort
   if exists('g:style_log')
     unlet g:style_log
+
+    let g:style_cnt += 1
   endif
 
   if (a:force_reset == 0)
-    DGCTSGEcho 'Setting style: ' . expand('%:p')
+    DGCTSGEcho '[#' .. g:style_cnt .. ']: Setting style: ' . expand('%:p')
   else
-    DGCTSGEcho 'Resetting style: ' . expand('%:p')
+    DGCTSGEcho '[#' .. g:style_cnt .. ']: Resetting style: ' . expand('%:p')
   endif
 
   let l:change_style = 1
