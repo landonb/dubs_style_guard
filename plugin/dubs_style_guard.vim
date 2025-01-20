@@ -227,6 +227,7 @@ nnoremap <silent> <script>
 
 function! s:DG_CycleResetLocking() abort
   let b:dubs_style_locked = 0
+
   call <SID>CycleThruStyleGuides(1, 1, 1)
 endfunction
 
@@ -239,8 +240,8 @@ endfunction
 " ------------------------------------------
 
 " (lb): The `expand` help indicates:
-" 	      Note: Use |shellescape()| or |::S| with |expand()| or |fnamemodify()|
-" 	      to escape special characters in a command argument.
+"         Note: Use |shellescape()| or |::S| with |expand()| or |fnamemodify()|
+"         to escape special characters in a command argument.
 "       but I'm not quite sure that the :S is all about, not in docs, didn't work for me.
 function! s:ShellEscapedFullPath() abort
   return shellescape(expand('%:p'))
