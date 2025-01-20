@@ -692,6 +692,10 @@ endfunction
 " ***
 
 function s:SystemCmdFailedAlert(shell_error, system_cmd) abort
+  let l:alert_msg = 'system() call failed (' .. a:shell_error .. ') : ' .. a:system_cmd
+
+  DGCTSGEcho l:alert_msg
+
   if get(g:, 'dubs_style_guard_alerted_grep_cmd', 0)
 
     return
@@ -699,7 +703,7 @@ function s:SystemCmdFailedAlert(shell_error, system_cmd) abort
 
   let g:dubs_style_guard_alerted_grep_cmd = 1
 
-  echom 'ALERT: dubs_style_guard: system() call failed (' .. a:shell_error .. ') : ' .. a:system_cmd
+  echom 'ALERT: dubs_style_guard: ' .. l:alert_msg
 endfunction
 
 " -------------------------------------------------------------------
