@@ -60,6 +60,66 @@ let s:dubs_style_3_char_tabbed = 6
 "   let s:dubs_styles_count = s:dubs_style_3_char_tabbed + 1
 let s:dubs_styles_count = s:dubs_style_4_char_spaced + 1
 
+" Default spaces and tabbed styles.
+
+function s:DefineStyleGuardStyles() abort
+  let g:dubs_style_guard_styles = {
+    \ '2_char_spaced': s:dubs_style_2_char_spaced,
+    \ '4_char_tabbed': s:dubs_style_4_char_tabbed,
+    \ '4_char_spaced': s:dubs_style_4_char_spaced,
+    \ '8_char_tabbed': s:dubs_style_8_char_tabbed,
+    \ '2_char_tabbed': s:dubs_style_2_char_tabbed,
+    \ '3_char_spaced': s:dubs_style_3_char_spaced,
+    \ '3_char_tabbed': s:dubs_style_3_char_tabbed,
+    \ }
+endfunction
+
+call s:DefineStyleGuardStyles()
+
+" HSTRY/2025-01-19: How author embraced 2 spaces-per-tab for default spaced indentation:
+" - If a file is obviously tab-indented, but there's no modeline
+"   or ./.editorconfig, it's not trivial to determine the likely
+"   number of spaces per tab. So we'll default to the 'tabbed'
+"   value set here.
+"   - In author's anecdotal experience, most tab-widths I see
+"     used with tab indents is 4 spaces-per-tab, with the notable
+"     exception being Vim help files, which use 8 spaces-per-tab.
+"     - So we'll default to 4 spaces-per-tab with tab indentation on.
+" - If a file is space-indented, or if this script fails to identify
+"   the type of indentation, it falls back on the 'spaced' value
+"   set here.
+"   - Some reasons to use text:
+"     - PEP 8 says use 4 spaces for indentation
+"       https://www.python.org/dev/peps/pep-0008/
+"     - Bash scripts should use spaces so copy-pasting to the
+"       terminal works without triggering tab completion.
+"     - Tab indents seem dated, so just assume spaced, unless not.
+" - The defaults used in the this file were unstable until 2018:
+"   - For a handful of years, the author wavered on the "correct"
+"     number of spaces-per-tab:
+"     - By 2016-11-18, I had tried three different settings for
+"       reST files: 2 spaces, 4 spaces, and 3 spaces per tab.
+"       - Re: 3 spt: The ".. directive" syntax in reST means blocks often
+"         align after the third column. So using 3 spaces for *rstdentation*
+"         can be useful.
+"       - From 2016-11-18 until 2018-01-19, I tried 3 spaces-per-tab for rst.
+"       - Since 2018-01-19, I've been using 2 spaces-per-tab.
+"     - For other files, I tried 2 spaces for a while, then I tried 4 spaces
+"       *but tabbed* from 2016-10-28 until 2016-11-18, but I reverted back to
+"       using 4 *spaces* after realizing how much I disliked tab-indentation.
+"       - Then on 2018-01-29, I changed from 4 down to 2 spaces-per-tab after
+"         having this ephihany:
+"         - THOTS/2018-01-29: You can make 4 spaces from 2, but you cannot
+"                             make 2 spaces from 4. So 2 is more flexible.
+
+if !exists('g:dubs_style_fallback_indent_width_spaced')
+  let g:dubs_style_fallback_indent_width_spaced = g:dubs_style_guard_styles['2_char_spaced']
+endif
+
+if !exists('g:dubs_style_fallback_indent_width_tabbed')
+  let g:dubs_style_fallback_indent_width_tabbed = g:dubs_style_guard_styles['4_char_tabbed']
+endif
+
 " User interface.
 
 if !exists('g:dubs_style_preferred_expand_tab')
@@ -381,47 +441,21 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
         if (l:n_tabbed > 10) && (l:n_tabbed > (2 * l:n_spaced))
           " If the file is already mostly tabbed, setup tabbing.
           DGCTSGEcho 'Style guess: Tab-indented > 10 and more than 2x space starts'
-          " Vim help files are 8 spaces per tab, but most other times
-          " it's 4 spaces per tab. At least that's [lb]'s experience.
-          let b:dubs_style_index = s:dubs_style_4_char_tabbed
+          let b:dubs_style_index = g:dubs_style_fallback_indent_width_tabbed
         elseif (l:n_tabbed > 0) && (l:n_spaced == 0)
           DGCTSGEcho 'Style guess: Tab-indented > 0 and no space-starts'
-          let b:dubs_style_index = s:dubs_style_4_char_tabbed
+          let b:dubs_style_index = g:dubs_style_fallback_indent_width_tabbed
         elseif (l:n_spaced > 0) && (l:n_tabbed == 0)
           DGCTSGEcho 'Style guess: No tab starts but space starts'
-          " HSTRY/2016-11-18: 2, 4, next I'll just try 3 again.
-          "   let b:dubs_style_index = s:dubs_style_2_char_spaced
-          "   let b:dubs_style_index = s:dubs_style_4_char_spaced
-          " HSTRY/2018-01-19: Heh. Back to 2.
-          let b:dubs_style_index = s:dubs_style_2_char_spaced
+          let b:dubs_style_index = g:dubs_style_fallback_indent_width_spaced
         elseif expand('%:e') == 'rst'
-          " Because of the ".. directive" convention in reST, which means blocks
-          " often align after the third column, make rstdentation 3-spaced. Or 4.
-          " I keep changing my mind.
-          "   let b:dubs_style_index = s:dubs_style_3_char_spaced
-          " HSTRY/2025-01-19: This's been 2 spaces for a long, long time.
           DGCTSGEcho 'Style guess: Space-indented / rst'
-          let b:dubs_style_index = s:dubs_style_2_char_spaced
+          let b:dubs_style_index = g:dubs_style_fallback_indent_width_spaced
           DGCTSGEcho 'dubs_style_index: ' . b:dubs_style_index
         else
-          " Just use spaces.
-          DGCTSGEcho 'Style guess: no guess'
-          " HSTRY/2016-10-28: From 2-spaces spaced to 4-spaces tabbed,
-          "                   to where has the world come?
-          "   let b:dubs_style_index = s:dubs_style_2_char_spaced
-          "   let b:dubs_style_index = s:dubs_style_4_char_tabbed
-          " HSTRY/2016-11-18: Ug. I keep flip flopping. Here's the latest reasoning:
-          " - PEP 8 says use 4 spaces for indentation
-          "     https://www.python.org/dev/peps/pep-0008/
-          "   and Bash scripts should also use spaces
-          "     so copy-paste to terminal works
-          "     (without triggering tab completion).
-          " - So use spaces:
-          "   let b:dubs_style_index = s:dubs_style_4_char_spaced
-          " HSTRY/2018-01-29: Another change, Back to 2.
-          " - THOTS: You can make 4 spaces from 2, but you cannot
-          "          make 2 spaces from 4. So 2 is more flexible.
-          let b:dubs_style_index = s:dubs_style_2_char_spaced
+          DGCTSGEcho 'Style guess: no guess (fallback: spaces)'
+          let b:dubs_style_index = g:dubs_style_fallback_indent_width_spaced
+        endif
       endif
     endif
 
