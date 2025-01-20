@@ -4,28 +4,6 @@
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
 
 " -------------------------------------------------------------------
-"
-" ------------------------------------------
-" About:
-
-" This script scans a file when the buffer is loaded and tries to
-" guess the whitespace style of the document.
-"
-" For new documents, you can add a .dubs_style file somewhere in
-" the path and specify the style therein. Use Vim modeline syntax,
-" and filter by file type, if necessary.
-"
-" Or, you can manually switch between whitespace styles using <Leader>de.
-" Caveat: The author prefers 2-character spaced indentation, but I also
-"         work with 4-character tabbed indentation, so those are the two
-"         recognized styles. You can easily modify the code below to use
-"         different styles or to add more styles to the list.
-"
-" You can also enable and disable visual wrapping, automatic long-line
-" breaking, and long-line highlighting using <Leader>dw from:
-"   https://github.com/landonb/dubs_toggle_textwrap
-
-" -------------------------------------------------------------------
 
 " GUARD: Press <F9> to reload this plugin (or :source it).
 " - Via: https://github.com/embrace-vim/vim-source-reloader#↩️
@@ -127,22 +105,12 @@ endfunction
 " Toggle Style Guide Enforcement
 " ------------------------------------------------------
 
-" The user can cycle through the set of pre-defined style guide templates.
-" - HSTRY/2024-12-11: Was <Leader>e, but I've moved Dubs maps under \d.
-if !hasmapto('<Plug>DubsStyleGuard_CycleThruStyleGuides')
-  nmap <silent> <unique> <Leader>de
-    \ <Plug>DubsStyleGuard_CycleThruStyleGuides
-endif
-
-" Map <Plug> to an <SID> function
-noremap <silent> <unique> <script>
-  \ <Plug>DubsStyleGuard_CycleThruStyleGuides
+nnoremap <silent> <script>
+  \ <Plug>(dubs-style-guard-cycle-thru-style-guides)
   \ :call <SID>CycleThruStyleGuides(0, 1, 0)<CR>
 
-" And finally thunk to the script fcn.
-"  " function! <SID>CycleThruStyleGuides() abort
-"  "   call s:CycleThruStyleGuides()
-"  " endfunction
+" HSTRY/2024-12-11: Was <Leader>e, but I've moved Dubs maps under \d.
+call g:embrace#style_guard#CreateMaps_CycleThruStyleGuides('<Leader>de')
 
 " 2012.10.03: I don't use the built-in Ctrl-e often -- in
 " command and select mode, it moves the buffer one line up
