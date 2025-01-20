@@ -515,10 +515,13 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   else
     let l:ws_style_units = 'ch/t (tabbed)'
   endif
+
+  let l:style_msg = 'Whitespace Style: ' . &tabstop . ' ' . l:ws_style_units
+
   if (a:dont_cycle == 0) || (a:do_echom == 1)
-    echomsg 'Whitespace Style: ' . &tabstop . ' ' . l:ws_style_units
+    echomsg l:style_msg
   endif
-  DGCTSGEcho 'Whitespace Style: ' . &tabstop . ' ' . l:ws_style_units
+  DGCTSGEcho l:style_msg
 
   " See also: dubs_edit_juice/plugin/smart-tabs.vim, which translates tabs
   " to spaces if we're tabbing but not indenting (i.e., if we're pressing
