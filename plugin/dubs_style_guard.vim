@@ -522,7 +522,7 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
     else
       let b:dubs_styles_count_ft = s:dubs_styles_count
     endif
-  endif " (a:dont_cycle == 1)
+  endif " end: if (a:dont_cycle == 1) && (l:use_style == 1)
 
   if (l:use_style == 0)
     " Default for Quickfix and other special windows is 2-spaced.
