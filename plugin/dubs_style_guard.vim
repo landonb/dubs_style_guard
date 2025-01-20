@@ -422,8 +422,8 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
       "
       " Modeline is expected to be in first or final lines of file.
       " - NOTED/2020-08-26: macOS head uses -n, not --lines.
-      let l:bash_cmd1 =
-        \ '/usr/bin/head -n ' . g:dubs_style_search_depth_head . ' ' . l:escaped_path
+      let l:bash_cmd11 =
+        \ 'command head -n ' . g:dubs_style_search_depth_head . ' ' . l:escaped_path
         \ . ' | ' . l:modeline_search
       " Note: [lb] sent the head a bad filename but v:shell_error
       "       indicates 0, which could be because the pipe to grep
@@ -437,15 +437,15 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
       "       i.e., we sent the error string to the 'set' command.
       "       MAYBE: Check the syntax of l:modeline_embedded, maybe
       "              using matchstr.
-      DGCTSGEcho 'Modeline search: 1st l:bash_cmd1: ' . l:bash_cmd1
-      let l:modeline_embedded = system(l:bash_cmd1)
+      DGCTSGEcho 'Modeline search: 1st l:bash_cmd11: ' . l:bash_cmd11
+      let l:modeline_embedded = system(l:bash_cmd11)
       if l:modeline_embedded == ''
         " - NOTE/2020-08-26 14:55: macOS head has -n, but not --lines.
-        let l:bash_cmd1 =
-          \ '/usr/bin/tail -n ' . g:dubs_style_search_depth_tail . ' ' . l:escaped_path
+        let l:bash_cmd12 =
+          \ 'command tail -n ' . g:dubs_style_search_depth_tail . ' ' . l:escaped_path
           \ . ' | ' . l:modeline_search
-        DGCTSGEcho 'Modeline search: 2nd l:bash_cmd1: ' . l:bash_cmd1
-        let l:modeline_embedded = system(l:bash_cmd1)
+        DGCTSGEcho 'Modeline search: 2nd l:bash_cmd12: ' . l:bash_cmd12
+        let l:modeline_embedded = system(l:bash_cmd12)
       endif
       if l:modeline_embedded != ''
         DGCTSGEcho 'Found embedded modeline: ' . l:modeline_embedded
