@@ -653,9 +653,18 @@ endfunction
 "     echom "elapsed time:" .. reltimestr(reltime(start_time))
 
 function! s:CountFileTabsAndSpaces() abort
+  let l:ggrep = '$(command -v ggrep || command -v grep)'
+
+  " SAVVY: Add `|| grep -c -P` so that the system() command only
+  " fails if the grep command is missing, or if it's not GNU grep.
+  " - Because grep fails if there are no matches, and we don't want
+  "   to mistake that failure for the other failure.
+  let l:safety_check_spaced = ' || echo "" | ' .. l:ggrep .. ' -c "^$" >/dev/null'
+  let l:safety_check_tabbed = ' || echo "" | ' .. l:ggrep .. ' -c -P "^$" >/dev/null'
+
   " Count number of lines that start with space vs. tab for current buffer path.
-  let l:cmd_cnt_leading_spaces = '$(command -v ggrep || command -v grep) -c "^ " "' . expand('%:p') . '"'
-  let l:cmd_cnt_leading_tabs = '$(command -v ggrep || command -v grep) -c -P "^\t" "' . expand('%:p') . '"'
+  let l:cmd_cnt_leading_spaces = l:ggrep .. ' -c "^ " "' .. expand('%:p') .. '"' .. l:safety_check_spaced
+  let l:cmd_cnt_leading_tabs = l:ggrep .. ' -c -P "^\t" "' .. expand('%:p') .. '"' .. l:safety_check_tabbed
 
   silent let l:n_spaced = system(l:cmd_cnt_leading_spaces)
   if v:shell_error != 0
