@@ -629,7 +629,18 @@ function! s:CountFileTabsAndSpaces() abort
   let l:cmd_cnt_leading_tabs = '$(command -v ggrep || command -v grep) -c -P "^\t" "' . expand('%:p') . '"'
 
   silent let l:n_spaced = system(l:cmd_cnt_leading_spaces)
+  if v:shell_error != 0
+    call s:SystemCmdFailedAlert(v:shell_error, l:cmd_cnt_leading_spaces)
+
+    return [0, 0]
+  endif
+
   silent let l:n_tabbed = system(l:cmd_cnt_leading_tabs)
+  if v:shell_error != 0
+    call s:SystemCmdFailedAlert(v:shell_error, l:cmd_cnt_leading_tabs)
+
+    return [0, 0]
+  endif
 
   let l:n_spaced = substitute(l:n_spaced, "\n", "", "")
   let l:n_tabbed = substitute(l:n_tabbed, "\n", "", "")
@@ -638,6 +649,19 @@ function! s:CountFileTabsAndSpaces() abort
                        \ . ' / n_tabbed: ' . l:n_tabbed
 
   return [l:n_spaced, l:n_tabbed]
+endfunction
+
+" ***
+
+function s:SystemCmdFailedAlert(shell_error, system_cmd) abort
+  if get(g:, 'dubs_style_guard_alerted_grep_cmd', 0)
+
+    return
+  endif
+
+  let g:dubs_style_guard_alerted_grep_cmd = 1
+
+  echom 'ALERT: dubs_style_guard: system() call failed (' .. a:shell_error .. ') : ' .. a:system_cmd
 endfunction
 
 " -------------------------------------------------------------------
