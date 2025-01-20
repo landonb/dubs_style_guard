@@ -330,8 +330,9 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
 
   " We always don't use "soft tabs".
   setlocal softtabstop=0
-  " Note: If you use dubs_edit_juice/plugin/smart-tabs.vim and set
-  "       softtabstop, you'll bork the undo stack.
+  " BWARE: If you use dubs_edit_juice/plugin/smart-tabs.vim
+  "        and set softtabstop, you'll bork the undo stack.
+  "   ~/.vim/pack/landonb/start/dubs_edit_juice/plugin/smart-tabs.vim
   " Bad?: setlocal softtabstop=3
   " Below, we'll set tabstop and shiftwidth.
   " Ignoring: copyindent, preserveindent.
