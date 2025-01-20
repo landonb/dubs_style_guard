@@ -21,6 +21,17 @@ let g:loaded_dubs_style_guard_plugin = 1
 
 " -------------------------------------------------------------------
 
+" See also: tpope's Sleuth: https://github.com/tpope/vim-sleuth
+"      and: http://www.vim.org/scripts/script.php?script_id=1171
+"           DetectIndent: Automatically detect indent
+"                         (expandtab, shiftwidth, tabstop) settings
+" Sleuth is pure Vim and more complete (it doesn't consider spacing
+" style of comments, for example). DetectIndent is also pure Vim.
+"
+" But this plugin is a decent solution, too.
+
+" -------------------------------------------------------------------
+
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Smart Style Guide Functionality
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -330,14 +341,6 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
     " otherwise analyze the file buffer and count the number of
     " lines that start with a space and compare to the number
     " that start with a tab.
-
-    " See also: tpope's Sleuth: https://github.com/tpope/vim-sleuth
-    "      and: http://www.vim.org/scripts/script.php?script_id=1171
-    "           DetectIndent: Automatically detect indent
-    "                         (expandtab, shiftwidth, tabstop) settings
-    " Sleuth is pure Vim and more complete (it doesn't consider spacing
-    " style of comments, for example). DetectIndent is also pure Vim.
-    " But this is a pretty good solution
 
     " We can also look for modeline strings.
     " Test: tail doc-------dubs_cycloplan.txt \
