@@ -338,149 +338,90 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   " Ignoring: copyindent, preserveindent.
 
   if (a:dont_cycle == 1) && (l:use_style == 1)
-    " If user has not fixed the tab style, look for a modeline,
-    " otherwise analyze the file buffer and count the number of
-    " lines that start with a space and compare to the number
-    " that start with a tab.
+    " If user has not fixed the tab style, look for a modeline in the
+    " head or tail of the buffer.
+    " - If not found, we'll count the number of lines that start with a
+    "   space and compare to the number of lines that start with a tab.
+    let l:extracted_cmds = s:ExtractModelineCmdsFromBufferHeadOrTail()
 
-    " We can also look for modeline strings.
-    " Test: tail doc-------dubs_cycloplan.txt \
-    "       | /bin/egrep '^\W*vim:([\=\:a-z0-9]+)\W*$' \
-    "       | /usr/bin/env sed 's/([\=\:a-z0-9]+)\W*$/\1/' \
-    "       | /usr/bin/env sed 's/:/ /g'
-    "
-    " We'll look for a modeline in the file itself.
-    let l:modeline_grep_prefix = 'egrep --max-count=1 "^\W*'
-    " SYNC_ME: l:modeline_grep_postfix and l:modeline_seds_postfix.
-    " SAVVY: \W: non-word characters: [^a-zA-Z0-9_]
-    let l:modeline_grep_postfix = ':([\=\:a-z0-9 ]+)\W*$" '
-    " NOTE: grep syntax is just '?' but in sed you'll see '\?'.
-    let l:modeline_grep =
-      \ l:modeline_grep_prefix . 'vim\s?' . l:modeline_grep_postfix
-    let l:modeline_seds_prefix =
-      \ '| /usr/bin/env sed "s/^\W*'
-    " SYNC_ME: l:modeline_grep_postfix and l:modeline_seds_postfix.
-    let l:modeline_seds_postfix =
-      \ ':\([\=\:a-z0-9 ]\+\)\W*$/\1/"'
-      \ . ' | /usr/bin/env sed "s/:/ /g"'
-      \ . ' | /usr/bin/env sed "s/\bset\b/ /g"'
-    let l:modeline_seds =
-      \ l:modeline_seds_prefix . 'vim\s\?' . l:modeline_seds_postfix
-    let l:modeline_search = l:modeline_grep . l:modeline_seds
-    let l:modeline_embedded = ''
-    if filereadable(expand('%:p'))
-      let l:escaped_path = <SID>ShellEscapedFullPath()
-      " 2015.04.10: If you open a file with a space in it's path, you'll see, e.g.,
-      "      "./Electronica-House/Daft Punk/.audfs" 2L, 64C^[[2;2R
-      "      Error detected while processing function
-      "         <SNR>40_CycleThruStyleGuides_FixMatch
-      "           ..<SNR>40_CycleThruStyleGuides
-      "             ..<SNR>40_DG_CycleThruStyleGuides_:
-      "      line  217:
-      "      E518: Unknown option: /usr/bin/head:
-      "      E486: Pattern not found: usr
-      "      E518: Unknown option: /usr/bin/head:
-      "      E486: Pattern not found: usr
-      "      Press ENTER or type command to continue
-      "
-      " Modeline is expected to be in first or final lines of file.
-      " - NOTED/2020-08-26: macOS head uses -n, not --lines.
-      let l:bash_cmd11 =
-        \ 'command head -n ' . g:dubs_style_search_depth_head . ' ' . l:escaped_path
-        \ . ' | ' . l:modeline_search
-      " Note: [lb] sent the head a bad filename but v:shell_error
-      "       indicates 0, which could be because the pipe to grep
-      "       succeeded and that's what the v:shell_error represents.
-      "       Anyway, I added a filereadable above, which should fix
-      "       most errors we'd have here. FYI: If the system() command
-      "       fails, it might return the error string, and if we set
-      "       try "execute 'set ' . l:modeline_embedded" we'll get
-      "       an obscure error like: "E518: Unknown option: head:",
-      "       i.e., Vim's response to "set head: cannot read file",
-      "       i.e., we sent the error string to the 'set' command.
-      "       MAYBE: Check the syntax of l:modeline_embedded, maybe
-      "              using matchstr.
-      DGCTSGEcho 'Modeline search: 1st l:bash_cmd11: ' . l:bash_cmd11
-      let l:modeline_embedded = system(l:bash_cmd11)
-      if l:modeline_embedded == ''
-        " - NOTE/2020-08-26 14:55: macOS head has -n, but not --lines.
-        let l:bash_cmd12 =
-          \ 'command tail -n ' . g:dubs_style_search_depth_tail . ' ' . l:escaped_path
-          \ . ' | ' . l:modeline_search
-        DGCTSGEcho 'Modeline search: 2nd l:bash_cmd12: ' . l:bash_cmd12
-        let l:modeline_embedded = system(l:bash_cmd12)
-      endif
-      if l:modeline_embedded != ''
-        DGCTSGEcho 'Found embedded modeline: ' . l:modeline_embedded
-      endif
-    else
-        DGCTSGEcho 'File is not readable: ' . expand('%:p')
+    if l:extracted_cmds != ''
+      try
+        execute 'setlocal ' . l:extracted_cmds
+        DGCTSGEcho 'execute setlocal ' . l:extracted_cmds
+        let b:dubs_style_index = s:dubs_style_file_modeline
+      catch
+        " E.g., "E518: Unknown option: foo=bar"
+        " - Or more specifically:
+        "     catch /^Vim\%((\a\+)\)\=:E518/
+        " - Note from Normal mode, you'll see this message.
+        "   - But from Insert mode, Vim writes save info, e.g.,
+        "       dubs_style_guard.vim" 725L, 28023B written
+        "     then it prints the message emitted here.
+        "     - But then Vim echoes "-- INSERT --".
+        "     - So user might not notice this message.
+        echom 'dubs_style_guard: modeline failed: ' .. l:extracted_cmds .. ' | file: ' .. expand('%:p')
+        DGCTSGEcho 'setlocal failed: ' . l:extracted_cmds
+        " Clear var. so we keep sussing.
+        let l:extracted_cmds = ''
+      endtry
     endif
 
-    let l:found_modeline = ''
-    if l:modeline_embedded != ''
-      let l:found_modeline = l:modeline_embedded
-    endif
-
-    if l:found_modeline != ''
-      " Either the file or a .dubs_style.vim file contains a modeline.
-      DGCTSGEcho 'execute setlocal ' . l:found_modeline
-      execute 'setlocal ' . l:found_modeline
-      let b:dubs_style_index = s:dubs_style_file_modeline
-    elseif expand('%:e') == 'help'
-      " From the bottom of most help files:
-      "setlocal tw=78 ts=8 ft=help norl
-      " Except *.help is a hack so we can get the same tab width...
-      setlocal tw=78 ts=8 ft=text norl
-      " 2011.01.27: Use setlocal, not set, so command applies just to cur buf.
-      let b:dubs_style_index = s:dubs_style_file_modeline
-      DGCTSGEcho 'a help file'
-    else
-      let [l:n_spaced, l:n_tabbed] = s:CountFileTabsAndSpaces()
-
-      if (l:n_tabbed > 10) && (l:n_tabbed > (2 * l:n_spaced))
-        " If the file is already mostly tabbed, setup tabbing.
-        DGCTSGEcho 'Style guess: Tab-indented > 10 and more than 2x space starts'
-        " Vim help files are 8 spaces per tab, but most other times
-        " it's 4 spaces per tab. At least that's [lb]'s experience.
-        let b:dubs_style_index = s:dubs_style_4_char_tabbed
-      elseif (l:n_tabbed > 0) && (l:n_spaced == 0)
-        DGCTSGEcho 'Style guess: Tab-indented > 0 and no space-starts'
-        let b:dubs_style_index = s:dubs_style_4_char_tabbed
-      elseif (l:n_spaced > 0) && (l:n_tabbed == 0)
-        DGCTSGEcho 'Style guess: No tab starts but space starts'
-        " 2016-11-18: 2, 4, next I'll just try 3 again.
-        "let b:dubs_style_index = s:dubs_style_2_char_spaced
-        "let b:dubs_style_index = s:dubs_style_4_char_spaced
-        " 2018-01-19: Heh. Back to 2.
-        let b:dubs_style_index = s:dubs_style_2_char_spaced
-      elseif expand('%:e') == 'rst'
-        " Because of the ".. directive" convention in reST, which means blocks
-        " often align after the third column, make rstdentation 3-spaced. Or 4.
-        " I keep changing my mind.
-        DGCTSGEcho 'Style guess: Space-indented / rst'
-        "let b:dubs_style_index = s:dubs_style_3_char_spaced
-        let b:dubs_style_index = s:dubs_style_2_char_spaced
-        DGCTSGEcho 'dubs_style_index: ' . b:dubs_style_index
+    if l:extracted_cmds == ''
+      if expand('%:e') == 'help'
+        " From the bottom of most help files:
+        "   setlocal tw=78 ts=8 ft=help norl
+        " Except *.help is a hack so we can get the same tab width...
+        setlocal tw=78 ts=8 ft=text norl
+        " 2011.01.27: Use setlocal, not set, so command applies just to cur buf.
+        let b:dubs_style_index = s:dubs_style_file_modeline
+        DGCTSGEcho 'a help file'
       else
-        " Just use spaces.
-        DGCTSGEcho 'Style guess: no guess'
-        " 2016-10-28: From 2-spaces spaced to 4-spaces tabbed,
-        "             to where has the world come?
-        "let b:dubs_style_index = s:dubs_style_2_char_spaced
-        "let b:dubs_style_index = s:dubs_style_4_char_tabbed
-        " 2016-11-18: Ug. I keep flip flopping. Here's the latest reasoning:
-        " PEP 8 says use 4 spaces for indentation
-        "   https://www.python.org/dev/peps/pep-0008/
-        " and Bash scripts should also use spaces
-        "   so copy-paste to terminal works
-        "   (without triggering tab completion).
-        "let b:dubs_style_index = s:dubs_style_4_char_spaced
-        " 2018-01-29: Another 1, Back to 2.
-        "   (Was I using 4 because of reST? Even then,
-        "    you can make 4 from 2 but not 2 from 4,
-        "    so 2 is more flexy.)
-        let b:dubs_style_index = s:dubs_style_2_char_spaced
+        let [l:n_spaced, l:n_tabbed] = s:CountFileTabsAndSpaces()
+
+        if (l:n_tabbed > 10) && (l:n_tabbed > (2 * l:n_spaced))
+          " If the file is already mostly tabbed, setup tabbing.
+          DGCTSGEcho 'Style guess: Tab-indented > 10 and more than 2x space starts'
+          " Vim help files are 8 spaces per tab, but most other times
+          " it's 4 spaces per tab. At least that's [lb]'s experience.
+          let b:dubs_style_index = s:dubs_style_4_char_tabbed
+        elseif (l:n_tabbed > 0) && (l:n_spaced == 0)
+          DGCTSGEcho 'Style guess: Tab-indented > 0 and no space-starts'
+          let b:dubs_style_index = s:dubs_style_4_char_tabbed
+        elseif (l:n_spaced > 0) && (l:n_tabbed == 0)
+          DGCTSGEcho 'Style guess: No tab starts but space starts'
+          " HSTRY/2016-11-18: 2, 4, next I'll just try 3 again.
+          "   let b:dubs_style_index = s:dubs_style_2_char_spaced
+          "   let b:dubs_style_index = s:dubs_style_4_char_spaced
+          " HSTRY/2018-01-19: Heh. Back to 2.
+          let b:dubs_style_index = s:dubs_style_2_char_spaced
+        elseif expand('%:e') == 'rst'
+          " Because of the ".. directive" convention in reST, which means blocks
+          " often align after the third column, make rstdentation 3-spaced. Or 4.
+          " I keep changing my mind.
+          "   let b:dubs_style_index = s:dubs_style_3_char_spaced
+          " HSTRY/2025-01-19: This's been 2 spaces for a long, long time.
+          DGCTSGEcho 'Style guess: Space-indented / rst'
+          let b:dubs_style_index = s:dubs_style_2_char_spaced
+          DGCTSGEcho 'dubs_style_index: ' . b:dubs_style_index
+        else
+          " Just use spaces.
+          DGCTSGEcho 'Style guess: no guess'
+          " HSTRY/2016-10-28: From 2-spaces spaced to 4-spaces tabbed,
+          "                   to where has the world come?
+          "   let b:dubs_style_index = s:dubs_style_2_char_spaced
+          "   let b:dubs_style_index = s:dubs_style_4_char_tabbed
+          " HSTRY/2016-11-18: Ug. I keep flip flopping. Here's the latest reasoning:
+          " - PEP 8 says use 4 spaces for indentation
+          "     https://www.python.org/dev/peps/pep-0008/
+          "   and Bash scripts should also use spaces
+          "     so copy-paste to terminal works
+          "     (without triggering tab completion).
+          " - So use spaces:
+          "   let b:dubs_style_index = s:dubs_style_4_char_spaced
+          " HSTRY/2018-01-29: Another change, Back to 2.
+          " - THOTS: You can make 4 spaces from 2, but you cannot
+          "          make 2 spaces from 4. So 2 is more flexible.
+          let b:dubs_style_index = s:dubs_style_2_char_spaced
       endif
     endif
 
@@ -566,6 +507,56 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   "             I'd rather my delete back up by one and not just back up
   "             to the previous tab stop, 'cause I still gotta type spaces
   "             so it's really just more keypresses total.
+endfunction
+
+" ***
+
+" HSTRY: This used to be two system() calls using head, tail, grep and sed.
+" - TIMED: Baseline system() reltime() on author's Mac Mini 2 is ~0.06
+"          seconds (e.g., for just a simple `echo`).
+"   - Using pure Vimscript, on the other hand, is blazingly quick, ~0.002s.
+function s:ExtractModelineCmdsFromBufferHeadOrTail() abort
+  let l:extracted_cmds = s:ExtractModelineCmdsFromBuffer(1, g:dubs_style_search_depth_head)
+
+  if l:extracted_cmds == ''
+    let l:lnum = max([1, line('$') - g:dubs_style_search_depth_tail + 1])
+
+    let l:extracted_cmds = s:ExtractModelineCmdsFromBuffer(l:lnum, '$')
+  endif
+
+  return l:extracted_cmds
+endfunction
+
+function s:ExtractModelineCmdsFromBuffer(lnum, end) abort
+  let l:extracted_cmds = ''
+
+  " Note that the captured input associated with a matchbufline "submatches"
+  " group is always the subsequence that the group most recently matched.
+  " I.e., we cannot match a variable number of pattern groups. So match the
+  " whole set command, and split during post. (Also note that the
+  " "submatches" List always contains 9 items (for nine possible match
+  " groups).)
+  " - Note we could try to check for comment leaders, e.g.,
+  "     let l:pattern = '^\W*\%(\#\+\|\.\+\|\-\+\|\/\+\|\/\*\+\)\W*vim\s\?...'
+  "   but it's simpler to just check that only whitespace or punctuation
+  "   precedes the 'vim:'. Which isn't 'perfect', but good enough.
+  let l:pattern = '^\W*vim\s\?:\s*\%(set\s\+\)\?\(\%(\w\+\%(=\w\+\)\?\%(\s\+\|:\)\?\)\+\)\W*$'
+
+  let l:matches = matchbufline(bufnr(), l:pattern, a:lnum, a:end, { 'submatches': v:true })
+
+  if len(l:matches) > 0
+    " echom "l:matches: " .. join(l:matches, ' / ')
+
+    let l:first_match = l:matches[0]
+
+    let l:first_group = l:first_match['submatches'][0]
+
+    let l:extracted_cmds = substitute(l:first_group, ':', ' ', 'g')
+
+    DGCTSGEcho 'Found modeline on line no.: ' . l:first_match.lnum
+  endif
+
+  return l:extracted_cmds
 endfunction
 
 " ***
