@@ -326,52 +326,11 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   " Ignoring: copyindent, preserveindent.
 
   if (a:dont_cycle == 1) && (l:use_style == 1)
+    " If user has not fixed the tab style, look for a modeline,
+    " otherwise analyze the file buffer and count the number of
+    " lines that start with a space and compare to the number
+    " that start with a tab.
 
-    " If user is not deliberately toggling the tab style, intelligently set
-    " it based on project style, file extension, and existing convention.
-    "
-    " Count the number of tabbed indents and spaced indents.
-    " (Keywords: Count line matches to variable,
-    "            Set variable to number of lines matching search.)
-    "
-
-" FIXME: COMMENT ON ANSWER: give a vote to the guy who provided better answer.
-    " For help on this Vim trickery, see
-    "   https://stackoverflow.com/questions/8073780/
-    "     using-vim-how-do-you-use-a-variable-to-store-count-of-patterns-found
-    "   and also
-    "     :help sub-replace-\=
-    " EXPLAIN: How does the bar/pipe operator work?
-    "          When I type :echo 1 | 2 it spits out 1 and sends the cursor
-    "          to the top of the file. In command mode, | sends the cursor
-    "          to the start of the line.
-    " EXPLAIN: How come sending the new variable to map() works when
-    "          we haven't initialized the variable yet?
-    " SEE ALSO: :help /\zs and :help /\ze
-    "           These ensure that no substitution happens because
-    "           they make sure the pattern has zero width.
-    ""let n = [0] | bufdo %s/pattern\zs/\=map(n,'v:val+1')[1:]/ge
-    "let count_list = [0] | %s/^ \zs/\=map(count_list,'v:val+1')[1:]/ge
-    "let match_count = count_list[0]
-    "":DGCTSGEcho 'Substitution trick indicates: ' . match_count
-    "
-    " Another user answered with an easier-to-understand solution, and one
-    " that works better. The problem with the former solution is that the
-    " substitution trick has three side effects: It echoes the result of the
-    " substitution command, it moves the cursor to the end of the buffer, and
-    " most annoyingly, it adds a command to the undo stack and then the buffer
-    " is marked dirty.
-    " NOTE: expand('%:p') returns full path of current buffer. :help expand
-    " NOTE: Prefix :let with bufdo to count all buffers' matches.
-    "       I.e., bufdo let found = found + (system(...))
-    " NOTE: Using Perl-Compatible RegEx because egrep doesn't know "^\t".
-    "       Note that we could also use grep -P.
-    let l:n_spaced = (system('pcregrep "^ " "' . expand('%:p') . '" | wc -l'))
-    let l:n_tabbed = (system('pcregrep "^\t" "' . expand('%:p') . '" | wc -l'))
-    let l:n_spaced = substitute(l:n_spaced, "\n", "", "")
-    let l:n_tabbed = substitute(l:n_tabbed, "\n", "", "")
-    DGCTSGEcho 'Tab styl anlyss: n_spaced: ' . l:n_spaced
-                         \ . ' / n_tabbed: ' . l:n_tabbed
     " See also: tpope's Sleuth: https://github.com/tpope/vim-sleuth
     "      and: http://www.vim.org/scripts/script.php?script_id=1171
     "           DetectIndent: Automatically detect indent
@@ -603,6 +562,82 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   "             I'd rather my delete back up by one and not just back up
   "             to the previous tab stop, 'cause I still gotta type spaces
   "             so it's really just more keypresses total.
+endfunction
+
+" ***
+
+" Count and return the number of tabbed indents and spaced indents.
+
+" REFER: Count number of lines in buffer that match a pattern:
+"
+"   https://stackoverflow.com/questions/8073780/
+"     using-vim-how-do-you-use-a-variable-to-store-count-of-patterns-found
+"
+" - Here's a pure Vim solution:
+"
+"   - REFER:
+"     :help sub-replace-\=
+"
+"   - REFER: For zero-width matches (no substitution), see:
+"     :help /\zs
+"     :help /\ze
+"
+"   " let n = [0] | bufdo %s/pattern\zs/\=map(n,'v:val+1')[1:]/ge
+"   let count_list = [0] | %s/^ \zs/\=map(count_list,'v:val+1')[1:]/ge
+"   let match_count = count_list[0]
+"   " :DGCTSGEcho 'Substitution trick indicates: ' . match_count
+"
+" - Another user provided a (simpler?) solution using `pcregrep`
+"   and `wc -l` that is mutated below to use `grep -P -c`.
+"
+"   - One issue with the pure-Vim solution above is that the substitution
+"     trick has three side effects: It echoes the result of the
+"     substitution command, it moves the cursor to the end of the
+"     buffer, and most annoyingly, it adds a command to the undo stack
+"     and then the buffer is marked dirty.
+"
+" - REFER: Use `grep -P` Perl-compatible regex for the "^\t".
+"
+"   - On macOS, Homebrew "ggrep (GNU grep) 3.11" without "-P" prints
+"     an error, and always prints "0", e.g.,
+"
+"       $ ggrep -c "^\t" <path>
+"       ggrep: warning: stray \ before t
+"       0
+"
+"   but `grep -c` without "-P" works fine on Debian "grep (GNU grep) 3.8".
+"
+"   - Just saying.
+" TIMED/2025-01-19:
+" - Running reltime() before/after `DGCTSGEcho`:           0.000073 secs.
+" - Running reltime() before/after this whole function:    0.130494 secs.
+" - Running reltime() before/after `system('echo "foo"')`: 0.064276 secs.
+"   - So looks like system() is expensive even with simple commands,
+"     and the 2 grep commands are basically the cost of two system()
+"     commands.
+"     - MAYBE: Would it be faster to try to analyze the files without
+"       using system()? E.g., could we analyze the buffer instead of
+"       processing the same file through an external command?
+" - E.g.,
+"     let start_time = reltime()
+"     ...
+"     echom "elapsed time:" .. reltimestr(reltime(start_time))
+
+function! s:CountFileTabsAndSpaces() abort
+  " Count number of lines that start with space vs. tab for current buffer path.
+  let l:cmd_cnt_leading_spaces = '$(command -v ggrep || command -v grep) -c "^ " "' . expand('%:p') . '"'
+  let l:cmd_cnt_leading_tabs = '$(command -v ggrep || command -v grep) -c -P "^\t" "' . expand('%:p') . '"'
+
+  silent let l:n_spaced = system(l:cmd_cnt_leading_spaces)
+  silent let l:n_tabbed = system(l:cmd_cnt_leading_tabs)
+
+  let l:n_spaced = substitute(l:n_spaced, "\n", "", "")
+  let l:n_tabbed = substitute(l:n_tabbed, "\n", "", "")
+
+  DGCTSGEcho 'Tab styl anlyss: n_spaced: ' . l:n_spaced
+                       \ . ' / n_tabbed: ' . l:n_tabbed
+
+  return [l:n_spaced, l:n_tabbed]
 endfunction
 
 " -------------------------------------------------------------------
