@@ -466,49 +466,7 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
     endif
   endif " end: if (a:dont_cycle == 1) && (l:use_style == 1)
 
-  if (l:use_style == 0)
-    " Default for Quickfix and other special windows is 2-spaced.
-    "setlocal tabstop=2
-    "setlocal shiftwidth=2
-    "setlocal expandtab
-    :
-  elseif (b:dubs_style_index == s:dubs_style_2_char_spaced)
-    setlocal tabstop=2
-    setlocal shiftwidth=2
-    setlocal expandtab
-  elseif (b:dubs_style_index == s:dubs_style_2_char_tabbed)
-    setlocal tabstop=2
-    setlocal shiftwidth=2
-    setlocal noexpandtab
-  elseif (b:dubs_style_index == s:dubs_style_3_char_spaced)
-    " Cyclopath uses trips! 321 Polo? 321 Cyclopath!
-    setlocal tabstop=3
-    setlocal shiftwidth=3
-    setlocal expandtab
-  elseif (b:dubs_style_index == s:dubs_style_3_char_tabbed)
-    setlocal tabstop=3
-    setlocal shiftwidth=3
-    setlocal noexpandtab
-  elseif (b:dubs_style_index == s:dubs_style_4_char_spaced)
-    setlocal tabstop=4
-    setlocal shiftwidth=4
-    setlocal expandtab
-  elseif (b:dubs_style_index == s:dubs_style_4_char_tabbed)
-    setlocal tabstop=4
-    setlocal shiftwidth=4
-    setlocal noexpandtab
-  elseif (b:dubs_style_index == s:dubs_style_8_char_tabbed)
-    setlocal tabstop=8
-    setlocal shiftwidth=8
-    setlocal noexpandtab
-  elseif (b:dubs_style_index == s:dubs_style_file_modeline)
-    " Already setup.
-    :
-  else
-    " assert(False)
-    call confirm('Programmer Error: ' . b:dubs_style_index
-                 \ . ' ' . expand('%'), 'OK')
-  endif
+  call s:ApplyCurrentStyle(b:dubs_style_index, l:use_style)
 
   if (&expandtab == 1)
     let l:ws_style_units = 'sp/t (spaced)'
@@ -544,6 +502,54 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   "             I'd rather my delete back up by one and not just back up
   "             to the previous tab stop, 'cause I still gotta type spaces
   "             so it's really just more keypresses total.
+endfunction
+
+" ***
+
+function! s:ApplyCurrentStyle(dubs_style_index, use_style) abort
+  if (a:use_style == 0)
+    " Default for Quickfix and other special windows is 2-spaced.
+    "   setlocal tabstop=2
+    "   setlocal shiftwidth=2
+    "   setlocal expandtab
+    :
+  elseif (a:dubs_style_index == s:dubs_style_2_char_spaced)
+    setlocal tabstop=2
+    setlocal shiftwidth=2
+    setlocal expandtab
+  elseif (a:dubs_style_index == s:dubs_style_2_char_tabbed)
+    setlocal tabstop=2
+    setlocal shiftwidth=2
+    setlocal noexpandtab
+  elseif (a:dubs_style_index == s:dubs_style_3_char_spaced)
+    " Cyclopath uses trips! 321 Polo? 321 Cyclopath!
+    setlocal tabstop=3
+    setlocal shiftwidth=3
+    setlocal expandtab
+  elseif (a:dubs_style_index == s:dubs_style_3_char_tabbed)
+    setlocal tabstop=3
+    setlocal shiftwidth=3
+    setlocal noexpandtab
+  elseif (a:dubs_style_index == s:dubs_style_4_char_spaced)
+    setlocal tabstop=4
+    setlocal shiftwidth=4
+    setlocal expandtab
+  elseif (a:dubs_style_index == s:dubs_style_4_char_tabbed)
+    setlocal tabstop=4
+    setlocal shiftwidth=4
+    setlocal noexpandtab
+  elseif (a:dubs_style_index == s:dubs_style_8_char_tabbed)
+    setlocal tabstop=8
+    setlocal shiftwidth=8
+    setlocal noexpandtab
+  elseif (a:dubs_style_index == s:dubs_style_file_modeline)
+    " Already setup.
+    :
+  else
+    " assert(False)
+    call confirm('Programmer Error: ' . a:dubs_style_index
+                 \ . ' ' . expand('%'), 'OK')
+  endif
 endfunction
 
 " ***
