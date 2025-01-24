@@ -741,8 +741,10 @@ call s:EnableLineLengthStyleToogle()
 " -------------------------------------------------------------------
 
 " ------------------------------------------
-" EditorConfig enablement
+" EditorConfig config
 
-" From editoconfig:README.rst:
+" REFER: To ensure that this plugin works well with Tim Pope's fugitive,
+"        use the following patterns array:
+" https://github.com/editorconfig/editorconfig-vim?tab=readme-ov-file#excluded-patterns
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 
