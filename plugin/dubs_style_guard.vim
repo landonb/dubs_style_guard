@@ -604,115 +604,46 @@ endfunction
 
 " ***
 
-" Count and return the number of tabbed indents and spaced indents.
-
-" REFER: Count number of lines in buffer that match a pattern:
+" Count number of lines that start with space vs. tab for current buffer.
 "
-"   https://stackoverflow.com/questions/8073780/
-"     using-vim-how-do-you-use-a-variable-to-store-count-of-patterns-found
-"
-" - Here's a pure Vim solution:
-"
-"   - REFER:
-"     :help sub-replace-\=
-"
-"   - REFER: For zero-width matches (no substitution), see:
-"     :help /\zs
-"     :help /\ze
-"
-"   " let n = [0] | bufdo %s/pattern\zs/\=map(n,'v:val+1')[1:]/ge
-"   let count_list = [0] | %s/^ \zs/\=map(count_list,'v:val+1')[1:]/ge
-"   let match_count = count_list[0]
-"   " :DGCTSGEcho 'Substitution trick indicates: ' . match_count
-"
-" - Another user provided a (simpler?) solution using `pcregrep`
-"   and `wc -l` that is mutated below to use `grep -P -c`.
-"
-"   - One issue with the pure-Vim solution above is that the substitution
-"     trick has three side effects: It echoes the result of the
-"     substitution command, it moves the cursor to the end of the
-"     buffer, and most annoyingly, it adds a command to the undo stack
-"     and then the buffer is marked dirty.
-"
-" - REFER: Use `grep -P` Perl-compatible regex for the "^\t".
-"
-"   - On macOS, Homebrew "ggrep (GNU grep) 3.11" without "-P" prints
-"     an error, and always prints "0", e.g.,
-"
-"       $ ggrep -c "^\t" <path>
-"       ggrep: warning: stray \ before t
-"       0
-"
-"   but `grep -c` without "-P" works fine on Debian "grep (GNU grep) 3.8".
-"
-"   - Just saying.
-" TIMED/2025-01-19:
-" - Running reltime() before/after `DGCTSGEcho`:           0.000073 secs.
-" - Running reltime() before/after this whole function:    0.130494 secs.
-" - Running reltime() before/after `system('echo "foo"')`: 0.064276 secs.
-"   - So looks like system() is expensive even with simple commands,
-"     and the 2 grep commands are basically the cost of two system()
-"     commands.
-"     - MAYBE: Would it be faster to try to analyze the files without
-"       using system()? E.g., could we analyze the buffer instead of
-"       processing the same file through an external command?
-" - E.g.,
+" TIMED/2025-01-19: Using reltime(), e.g.,
 "     let start_time = reltime()
 "     ...
-"     echom "elapsed time:" .. reltimestr(reltime(start_time))
+"     echom "elapsed time: " .. reltimestr(reltime(start_time))
+" - Running reltime() before/after `DGCTSGEcho`:           0.000073 secs.
+" - Running reltime() before/after `system('echo "foo"')`: 0.064276 secs.
+" - Running reltime() before/after 2 system(`grep ...`)'s: 0.130494 secs.
+"   - HSTRY: This fcn. used to shell out, e.g.,
+"       let l:ggrep = '$(command -v ggrep || command -v grep)'
+"       let l:grep_tabbed = l:ggrep .. ' -c -P "^\t" "' .. expand('%:p') .. '"'
+"       " Use an OR fallback so that system() only fails if grep is absent
+"       " or not GNU grep — but don't fail if grep didn't find any results.
+"       let l:safety_check = ' || echo "" | ' .. l:ggrep .. ' -c -P "^$" >/dev/null'
+"       let l:cnt_tabbed = l:grep_tabbed .. l:safety_check
+"     - You can see that the cost of these 2 grep commands is basically
+"       the cost of two system() commands.
+" - Running reltime() before/after current function below: 0.000730 secs.
+"   - DUNNO: Not sure why this used to use system() commands, other than
+"     perhaps "I didn't know any better back then", or maybe "I copy-
+"     pasted something from Stack Overflow but didn't think too deeply
+"     about it otherwise".
+"     - In any case, lesson learned: ** Avoid system() calls. **
 
 function! s:CountFileTabsAndSpaces() abort
-  let l:ggrep = '$(command -v ggrep || command -v grep)'
+  let l:pattern_spaced = '^ '
+  let l:pattern_tabbed = '^\t'
 
-  " SAVVY: Add `|| grep -c -P` so that the system() command only
-  " fails if the grep command is missing, or if it's not GNU grep.
-  " - Because grep fails if there are no matches, and we don't want
-  "   to mistake that failure for the other failure.
-  let l:safety_check_spaced = ' || echo "" | ' .. l:ggrep .. ' -c "^$" >/dev/null'
-  let l:safety_check_tabbed = ' || echo "" | ' .. l:ggrep .. ' -c -P "^$" >/dev/null'
+  let l:matches_spaced = matchbufline(bufnr(), l:pattern_spaced, 1, '$')
+  let l:matches_tabbed = matchbufline(bufnr(), l:pattern_tabbed, 1, '$')
 
-  " Count number of lines that start with space vs. tab for current buffer path.
-  let l:cmd_cnt_leading_spaces = l:ggrep .. ' -c "^ " "' .. expand('%:p') .. '"' .. l:safety_check_spaced
-  let l:cmd_cnt_leading_tabs = l:ggrep .. ' -c -P "^\t" "' .. expand('%:p') .. '"' .. l:safety_check_tabbed
-
-  silent let l:n_spaced = system(l:cmd_cnt_leading_spaces)
-  if v:shell_error != 0
-    call s:SystemCmdFailedAlert(v:shell_error, l:cmd_cnt_leading_spaces)
-
-    return [0, 0]
-  endif
-
-  silent let l:n_tabbed = system(l:cmd_cnt_leading_tabs)
-  if v:shell_error != 0
-    call s:SystemCmdFailedAlert(v:shell_error, l:cmd_cnt_leading_tabs)
-
-    return [0, 0]
-  endif
-
-  let l:n_spaced = substitute(l:n_spaced, "\n", "", "")
-  let l:n_tabbed = substitute(l:n_tabbed, "\n", "", "")
+  let l:n_spaced = len(l:matches_spaced)
+  let l:n_tabbed = len(l:matches_tabbed)
 
   DGCTSGEcho 'Tab styl anlyss: n_spaced: ' . l:n_spaced
                        \ . ' / n_tabbed: ' . l:n_tabbed
+                       \ . ' / line cnt: ' . line('$')
 
   return [l:n_spaced, l:n_tabbed]
-endfunction
-
-" ***
-
-function s:SystemCmdFailedAlert(shell_error, system_cmd) abort
-  let l:alert_msg = 'system() call failed (' .. a:shell_error .. ') : ' .. a:system_cmd
-
-  DGCTSGEcho l:alert_msg
-
-  if get(g:, 'dubs_style_guard_alerted_grep_cmd', 0)
-
-    return
-  endif
-
-  let g:dubs_style_guard_alerted_grep_cmd = 1
-
-  echom 'ALERT: dubs_style_guard: ' .. l:alert_msg
 endfunction
 
 " -------------------------------------------------------------------
