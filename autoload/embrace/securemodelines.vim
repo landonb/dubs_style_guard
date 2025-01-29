@@ -6,10 +6,15 @@
 " License:          Redistribute under the same terms as Vim itself
 " Purpose:          A secure alternative to modelines
 
-if &compatible || v:version < 700 || exists('g:loaded_securemodelines')
-    finish
-endif
-let g:loaded_securemodelines = 1
+" THANX/2025-01-29: Added to landonb/dubs_style_guard from
+"   https://github.com/ciaranm/securemodelines
+" after seeing in another dev's dotfiles:
+"   https://github.com/augustocdias/dotfiles/blob/main/.config/nvim/lua/plugins/base.lua
+
+" if &compatible || v:version < 700 || exists('g:loaded_securemodelines')
+"     finish
+" endif
+" let g:loaded_securemodelines = 1
 
 if (! exists("g:secure_modelines_allowed_items"))
     let g:secure_modelines_allowed_items = [
@@ -38,6 +43,9 @@ if (! exists("g:secure_modelines_modelines"))
     let g:secure_modelines_modelines=5
 endif
 
+" NTRST: [lb]: dubs_style_guard doesn't touch &modeline, and leaves it 1.
+" - I've never noticed any side effect of not disabling it. But might as
+"   well disable it.
 if (! exists("g:secure_modelines_leave_modeline"))
     if &modeline
         set nomodeline
@@ -58,9 +66,11 @@ fun! <SID>DoOne(item) abort
     if len(l:matches) > 0
         if <SID>IsInList(g:secure_modelines_allowed_items, l:matches[1])
             exec "setlocal " . a:item
-        elseif g:secure_modelines_verbose
+        " elseif g:secure_modelines_verbose
+        else
             echohl WarningMsg
-            echo "Ignoring '" . a:item . "' in modeline"
+            " echo "Ignoring '" . a:item . "' in modeline"
+            echo "dubs_style_guard: Ignoring unlisted modeline item: '" . a:item . "'"
             echohl None
         endif
     endif
@@ -90,7 +100,8 @@ fun! <SID>CheckVersion(op, ver) abort
     endif
 endfun
 
-fun! <SID>DoModeline(line) abort
+" fun! <SID>DoModeline(line) abort
+fun! g:embrace#securemodelines#DoModeline(line) abort
     let l:matches = matchlist(a:line, '\%(\S\@<!\%(vi\|vim\([<>=]\?\)\([0-9]\+\)\?\)\|\sex\):\s*\%(set\s\+\)\?\([^:]\+\):\S\@!')
     if len(l:matches) > 0
         let l:operator = ">"
@@ -120,28 +131,30 @@ fun! <SID>DoModeline(line) abort
     endif
 endfun
 
-fun! <SID>DoModelines() abort
+"fun! <SID>DoModelines() abort
+fun! g:embrace#securemodelines#DoModelines() abort
     if line("$") > g:secure_modelines_modelines
         let l:lines={ }
         call map(filter(getline(1, g:secure_modelines_modelines) +
                     \ getline(line("$") - g:secure_modelines_modelines, "$"),
                     \ 'v:val =~ ":"'), 'extend(l:lines, { v:val : 0 } )')
         for l:line in keys(l:lines)
-            call <SID>DoModeline(l:line)
+            call g:embrace#securemodelines#DoModeline(l:line)
         endfor
     else
         for l:line in getline(1, "$")
-            call <SID>DoModeline(l:line)
+            call g:embrace#securemodelines#DoModeline(l:line)
         endfor
     endif
 endfun
 
-fun! SecureModelines_DoModelines() abort
-    call <SID>DoModelines()
-endfun
+" fun! SecureModelines_DoModelines() abort
+"     call <SID>DoModelines()
+" endfun
 
-aug SecureModeLines
-    au!
-    au BufRead,StdinReadPost * :call <SID>DoModelines()
-aug END
+" aug SecureModeLines
+"     au!
+"     " au BufRead,StdinReadPost * :call <SID>DoModelines()
+"     au BufRead,StdinReadPost * :call g:embrace#securemodelines#DoModelines()
+" aug END
 

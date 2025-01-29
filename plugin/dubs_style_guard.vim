@@ -405,25 +405,33 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
     let l:extracted_cmds = s:ExtractModelineCmdsFromBufferHeadOrTail()
 
     if l:extracted_cmds != ''
-      try
-        execute 'setlocal ' . l:extracted_cmds
-        DGCTSGEcho 'execute setlocal ' . l:extracted_cmds
+      let l:unsafe = 0
+      if l:unsafe
+        try
+          execute 'setlocal ' . l:extracted_cmds
+          DGCTSGEcho 'execute setlocal ' . l:extracted_cmds
+          let b:dubs_style_index = s:dubs_style_file_modeline
+        catch
+          " E.g., "E518: Unknown option: foo=bar"
+          " - Or more specifically:
+          "     catch /^Vim\%((\a\+)\)\=:E518/
+          " - Note from Normal mode, you'll see this message.
+          "   - But from Insert mode, Vim writes save info, e.g.,
+          "       dubs_style_guard.vim" 725L, 28023B written
+          "     then it prints the message emitted here.
+          "     - But then Vim echoes "-- INSERT --".
+          "     - So user might not notice this message.
+          echom 'dubs_style_guard: modeline failed: ' .. l:extracted_cmds .. ' | file: ' .. expand('%:p')
+          DGCTSGEcho 'setlocal failed: ' . l:extracted_cmds
+          " Clear var. so we keep sussing.
+          let l:extracted_cmds = ''
+        endtry
+      else
+        " REFER: https://github.com/ciaranm/securemodelines
+        DGCTSGEcho 'dubs_style_guard: *securely* applying modeline: ' .. l:extracted_cmds
+        call g:embrace#securemodelines#DoModeline('vim: ' .. l:extracted_cmds)
         let b:dubs_style_index = s:dubs_style_file_modeline
-      catch
-        " E.g., "E518: Unknown option: foo=bar"
-        " - Or more specifically:
-        "     catch /^Vim\%((\a\+)\)\=:E518/
-        " - Note from Normal mode, you'll see this message.
-        "   - But from Insert mode, Vim writes save info, e.g.,
-        "       dubs_style_guard.vim" 725L, 28023B written
-        "     then it prints the message emitted here.
-        "     - But then Vim echoes "-- INSERT --".
-        "     - So user might not notice this message.
-        echom 'dubs_style_guard: modeline failed: ' .. l:extracted_cmds .. ' | file: ' .. expand('%:p')
-        DGCTSGEcho 'setlocal failed: ' . l:extracted_cmds
-        " Clear var. so we keep sussing.
-        let l:extracted_cmds = ''
-      endtry
+      endif
     endif
 
     if l:extracted_cmds == ''
