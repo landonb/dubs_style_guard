@@ -100,7 +100,7 @@ function! s:CycleThruLineLengthGuides(on_bufenter = 0, keep_style = 0) abort
   let l:is_normal = g:embrace#windows2#IsNormalBuffer(bufnr())
 
   " Let the user opt-in to cc styling in a special buffer,
-  " but default to disabled (or what special default is).
+  " but default to disabled (or whatever special default is).
   if !l:is_normal && a:on_bufenter
     let w:style_guard_line_len_style = w:linestyle_default_special
   endif
