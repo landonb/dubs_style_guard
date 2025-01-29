@@ -155,9 +155,11 @@ function! s:CycleThruLineLengthGuides_NormalBuffer(on_bufenter = 0, keep_style =
     "     ColorColumnViolators. Or not. It's nice that the violator
     "     highlights aren't that bright, either.
     " - REFER: :h /\%v
-    let w:colcol_match_id_violatation = matchadd(
-      \ 'ColorColumn', '\%77v', l:match_priority
-      \ )
+    if w:colcol_match_id_violatation == -1
+      let w:colcol_match_id_violatation = matchadd(
+        \ 'ColorColumn', '\%77v', l:match_priority
+        \ )
+    endif
   else
     silent! call matchdelete(w:colcol_match_id_violatation)
 
