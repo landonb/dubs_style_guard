@@ -57,9 +57,6 @@ function! s:PrepareDefaults(linestyle = -1) abort
   "   We'll use our own highlight group (which also
   "   lets the user easily configure it).
   if !hlexists('ColorColumnViolation')
-    " If you use dubs_after_dark colorscheme, see:
-    "   ~/.vim/pack/landonb/start/dubs_after_dark/colors/after-dark.vim
-    " https://github.com/landonb/dubs_after_dark#🌃
     " USAGE: Define from your config to customize.
     " - This highlights paints the first character of a long line that breaches the barrier.
     " - THOTS: DarkBlue is subtle against a black bg. Or DarkMagenta or DarkGreen.
