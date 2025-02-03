@@ -5,10 +5,10 @@
 " -------------------------------------------------------------------
 
 " COPYD: See original for comment TMI.
-" ~/.vim/pack/embrace-vim/start/vim-buffer-delights/autoload/embrace/windows.vim
+" ~/.kit/nvim/embrace-vim/start/vim-buffer-delights/autoload/embrace/windows.vim
 "
 " NAMED: windows2.vim to not conflict with the original:
-" ~/.vim/pack/embrace-vim/start/vim-buffer-delights/autoload/embrace/windows.vim
+" ~/.kit/nvim/embrace-vim/start/vim-buffer-delights/autoload/embrace/windows.vim
 " (or maybe Vim is smart enough to check same-named autoload files? probably).
 
 function! g:embrace#windows2#IsNormalBuffer(bufnr) abort
