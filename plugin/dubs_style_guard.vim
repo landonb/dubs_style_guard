@@ -167,6 +167,11 @@ augroup dubs_style_guard_style_guides
 augroup END
 
 function! s:CycleThruStyleGuides_ApplyStyle() abort
+  if !s:CycleThruStyleGuides_VerifyBufferEligibility()
+
+    return
+  endif
+
   call s:CycleThruStyleGuides_SetMatch(s:dubs_style_2_char_spaced)
 
   call s:CycleThruStyleGuides_FixMatch()
@@ -198,6 +203,16 @@ call g:embrace#style_guard#CreateMaps_CycleThruStyleGuides('<Leader>de')
 " needed.
 " - 2024-12-11: I rarely do any manual style switching.
 "   - Mostly EditorConfig and modelines do all the magic.
+
+" ------------------------------------------------------
+
+" We could make a more robust blocklist, but for now just don't
+" run on Git commit message buffers.
+" - Use case: Committing changes to a modeline.
+
+function! s:CycleThruStyleGuides_VerifyBufferEligibility() abort
+  return match(expand('%:p'), '.git/COMMIT_EDITMSG$') == -1
+endfunction
 
 " ------------------------------------------------------
 
