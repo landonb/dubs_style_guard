@@ -10,7 +10,7 @@
 "
 " NAMED: windows2.vim to not conflict with the original:
 " ~/.kit/nvim/embrace-vim/start/vim-buffer-delights/autoload/embrace/windows.vim
-" (or maybe Vim is smart enough to check same-named autoload files? probably).
+" (or maybe Vim is smart enough to look in each same-named autoload file?).
 
 function! g:embrace#windows2#IsNormalBuffer(bufnr) abort
   let l:bufnr = bufnr(a:bufnr)
