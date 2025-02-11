@@ -681,7 +681,7 @@ endfunction
 function! s:EnableLineLengthStyleToogle() abort
   let l:key_sequence_cycle = '<Leader>dr'
   let l:key_sequence_reset = '<Leader>dR'
-  let l:default_line_style = 'colorcolumn_only'
+  let l:default_line_style = 'highlight_violators'
 
   call g:embrace#col_col_cycle#Enable(
     \ l:key_sequence_cycle,
