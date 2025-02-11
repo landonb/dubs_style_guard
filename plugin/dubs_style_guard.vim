@@ -1,4 +1,4 @@
-" Author: Landon Bouma <https://tallybark.com/> 
+" Author: Landon Bouma <https://tallybark.com/>
 " Project: https://github.com/landonb/dubs_style_guard#💂
 " License: GPLv3 / Copyright © 2009, 2015-2017 Landon Bouma.
 " Summary: Auto-sense Whitespace Style (spaces v. tabs)
