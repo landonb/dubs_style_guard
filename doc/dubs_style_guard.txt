@@ -1,6 +1,6 @@
 *dubs_style_guard.txt*	For Vim version 7.4.	Last change: 2015 Jan 23
 
-Dubs Vim -- Style Guard~
+Dubs Vim -- Style Guard 💂 ~
 
 STYLE GUARD				*dubs-style-guard*
 
@@ -81,7 +81,7 @@ Whitespace-detectors:
 ==============================================================================
 4. Style Guard Commands			*dubs-styleg-commands*
 
-Table~
+Table ~
 
 				*<Leader>de* *\de*
 <Leader>de		Cycle Through Whitespace Styles
