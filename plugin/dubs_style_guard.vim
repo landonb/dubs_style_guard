@@ -370,10 +370,14 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   " Prefer an .editorconfig file over a .dubs_style.vim file or guessing.
   let s:editconf_f = findfile('.editorconfig', '.;')
 
+  let l:bufnr = bufnr()
+  let l:bufname = bufname(l:bufnr)
+  let l:isreadable = filereadable(l:bufname)
+
   let l:use_style = 1
   " NO: \ || (&tw == 0)
   if (!exists('b:dubs_style_index')
-      \ || !g:embrace#windows2#IsNormalBuffer(bufnr())
+      \ || (!l:isreadable && !g:embrace#windows2#IsNormalBuffer(l:bufnr))
       \ || ((s:editconf_f != '') && (a:dont_cycle != 0)))
     DGCTSGEcho 'Style guide: not use_style'
     let l:use_style = 0
