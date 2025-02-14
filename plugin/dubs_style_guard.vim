@@ -164,6 +164,9 @@ augroup dubs_style_guard_style_guides
   au!
   
   autocmd BufRead,BufWritePost * call s:CycleThruStyleGuides_ApplyStyle()
+
+  " DUNNO/2025-02-14: BufRead not called on `pass edit {new-file}`.
+  autocmd VimEnter * call s:CycleThruStyleGuides_ApplyStyle()
 augroup END
 
 function! s:CycleThruStyleGuides_ApplyStyle() abort
