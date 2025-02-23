@@ -30,7 +30,7 @@
 
 " The user can cycle through the set of pre-defined style guide templates.
 function! g:embrace#style_guard#CreateMaps_CycleThruStyleGuides(key_sequence = '<Leader>de') abort
-  exec 'nnoremap <silent> ' .. a:key_sequence .. ' <Plug>(dubs-style-guard-cycle-thru-sytle-guides)'
-  exec 'inoremap <silent> ' .. a:key_sequence .. ' <C-O><Plug>(dubs-style-guard-cycle-thru-sytle-guides)'
+  exec 'nnoremap <silent> ' .. a:key_sequence .. ' <Plug>(dubs-style-guard-cycle-thru-style-guides)'
+  exec 'inoremap <silent> ' .. a:key_sequence .. ' <C-O><Plug>(dubs-style-guard-cycle-thru-style-guides)'
 endfunction
 
