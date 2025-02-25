@@ -381,7 +381,12 @@ function! s:CycleThruStyleGuides_(dont_cycle, do_echom) abort
   if (!exists('b:dubs_style_index')
       \ || (!l:isreadable && !g:embrace#windows2#IsNormalBuffer(l:bufnr))
       \ || ((s:editconf_f != '') && (a:dont_cycle != 0)))
-    DGCTSGEcho 'Style guide: not use_style'
+    let l:flags = ''
+      \ .. (l:isreadable ? ' +isreadable' : '-readable') 
+      \ .. (g:embrace#windows2#IsNormalBuffer(l:bufnr) ? ' +normal' : '-normal')
+      \ .. ((s:editconf_f != '') ? ' +editconf_f' : '- editconf_f')
+      \ .. ((a:dont_cycle != 0) ? ' +dont_cycle' : '- dont_cycle')
+    DGCTSGEcho 'Style guide: not use_style' .. l:flags
     let l:use_style = 0
   endif
 
