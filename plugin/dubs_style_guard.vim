@@ -600,6 +600,12 @@ function s:ExtractModelineCmdsFromBufferHeadOrTail() abort
 endfunction
 
 function s:ExtractModelineCmdsFromBuffer(lnum, end) abort
+  if v:version < 900
+    " No matchbufline
+
+    return ''
+  endif
+
   let l:extracted_cmds = ''
 
   " Note that the captured input associated with a matchbufline "submatches"
@@ -659,6 +665,12 @@ endfunction
 "     - In any case, lesson learned: ** Avoid system() calls. **
 
 function! s:CountFileTabsAndSpaces() abort
+  if v:version < 900
+    " No matchbufline
+
+    return [0, 0]
+  endif
+
   let l:pattern_spaced = '^ '
   let l:pattern_tabbed = '^\t'
 
