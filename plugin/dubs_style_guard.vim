@@ -605,7 +605,7 @@ function s:ExtractModelineCmdsFromBufferHeadOrTail() abort
 endfunction
 
 function s:ExtractModelineCmdsFromBuffer(lnum, end) abort
-  if v:version < 900
+  if !has('nvim') && v:version < 900
     " No matchbufline
 
     return ''
@@ -670,7 +670,7 @@ endfunction
 "     - In any case, lesson learned: ** Avoid system() calls. **
 
 function! s:CountFileTabsAndSpaces() abort
-  if v:version < 900
+  if !has('nvim') && v:version < 900
     " No matchbufline
 
     return [0, 0]
