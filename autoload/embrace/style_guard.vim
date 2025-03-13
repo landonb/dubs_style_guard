@@ -14,14 +14,14 @@
 " the path and specify the style therein. Use Vim modeline syntax,
 " and filter by file type, if necessary.
 "
-" Or, you can manually switch between whitespace styles using <Leader>de.
+" Or, you can manually switch between whitespace styles using <LocalLeader>de.
 " Caveat: The author prefers 2-character spaced indentation, but I also
 "         work with 4-character tabbed indentation, so those are the two
 "         recognized styles. You can easily modify the code below to use
 "         different styles or to add more styles to the list.
 "
 " You can also enable and disable visual wrapping, automatic long-line
-" breaking, and long-line highlighting using <Leader>dw from:
+" breaking, and long-line highlighting using <LocalLeader>dw from:
 "   https://github.com/landonb/dubs_toggle_textwrap
 
 " ------------------------------------------------------
@@ -29,7 +29,7 @@
 " ------------------------------------------------------
 
 " The user can cycle through the set of pre-defined style guide templates.
-function! g:embrace#style_guard#CreateMaps_CycleThruStyleGuides(key_sequence = '<Leader>de') abort
+function! g:embrace#style_guard#CreateMaps_CycleThruStyleGuides(key_sequence = '<LocalLeader>de') abort
   exec 'nnoremap <silent> ' .. a:key_sequence .. ' <Plug>(dubs-style-guard-cycle-thru-style-guides)'
   exec 'inoremap <silent> ' .. a:key_sequence .. ' <C-O><Plug>(dubs-style-guard-cycle-thru-style-guides)'
 endfunction

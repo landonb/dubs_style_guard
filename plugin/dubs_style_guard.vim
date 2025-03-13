@@ -187,8 +187,8 @@ nnoremap <silent> <script>
   \ <Plug>(dubs-style-guard-cycle-thru-style-guides)
   \ :call <SID>CycleThruStyleGuides(0, 1, 0)<CR>
 
-" HSTRY/2024-12-11: Was <Leader>e, but I've moved Dubs maps under \d.
-call g:embrace#style_guard#CreateMaps_CycleThruStyleGuides('<Leader>de')
+" HSTRY/2024-12-11: Was <LocalLeader>e, but I've moved Dubs maps under \d.
+call g:embrace#style_guard#CreateMaps_CycleThruStyleGuides('<LocalLeader>de')
 
 " 2012.10.03: I don't use the built-in Ctrl-e often -- in
 " command and select mode, it moves the buffer one line up
@@ -197,7 +197,7 @@ call g:embrace#style_guard#CreateMaps_CycleThruStyleGuides('<Leader>de')
 " see it's only mapped to one key-combo).
 "  NO: noremap <C-e> :call <SID>CycleThruStyleGuides()<CR><CR>
 "  NO: inoremap <C-e> <C-O>:call <SID>CycleThruStyleGuides()<CR><CR>
-" 2014.11.18: I started using <Leader>de more often to switch styles
+" 2014.11.18: I started using <LocalLeader>de more often to switch styles
 " as I started working on different projects. But I also added more
 " intelligence to auto-detect the current project's style whenever
 " switching buffers. So I still don't manually switch styles very
@@ -269,11 +269,11 @@ endfunction
 " ------------------------------------------------------
 
 " Reset the style (possibly by reading the file for its modeline).
-" - HSTRY/2024-12-11: Was <Leader>E, but I've moved Dubs maps under \d.
+" - HSTRY/2024-12-11: Was <LocalLeader>E, but I've moved Dubs maps under \d.
 if !hasmapto('<Plug>DG_CycleResetLocking')
-  nnoremap <silent> <Leader>dE
+  nnoremap <silent> <LocalLeader>dE
     \ <Plug>DG_CycleResetLocking
-  inoremap <silent> <Leader>dE
+  inoremap <silent> <LocalLeader>dE
     \ <Plug>DG_CycleResetLocking
 endif
 
@@ -702,8 +702,8 @@ endfunction
 " - Here's our first autoload/ conversion.
 
 function! s:EnableLineLengthStyleToogle() abort
-  let l:key_sequence_cycle = '<Leader>dr'
-  let l:key_sequence_reset = '<Leader>dR'
+  let l:key_sequence_cycle = '<LocalLeader>dr'
+  let l:key_sequence_reset = '<LocalLeader>dR'
   let l:default_line_style = 'highlight_violators'
 
   call g:embrace#col_col_cycle#Enable(
